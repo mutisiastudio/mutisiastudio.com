@@ -11,13 +11,11 @@ body {
   line-height: 1.5;
 }
 
-main, footer {
-  max-width: 40rem;
+section, footer, .top {
+  max-width: 52rem;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: 3rem 1rem;
 }
-
-footer a { margin-right: 1rem; }
 
 /* Theme variables are set on <html> by theme-picker.js; these are the Aurora defaults
    so the page is readable before the script runs. */
@@ -42,9 +40,17 @@ body {
 
 a { color: inherit; }
 
-.hero { text-align: center; padding-top: 2.5rem; }
+.top {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem;
+  padding-top: 0.9rem; padding-bottom: 0; font-size: 0.8rem;
+}
+.top a { text-decoration: none; }
+.top a:hover { text-decoration: underline; }
+.top .brand { font-weight: 600; letter-spacing: 0.04em; }
+
+.hero { text-align: center; padding-top: 1.5rem; }
 .hero img { width: 60px; height: 60px; border-radius: 15px; }
-.hero h1 { font-weight: 300; font-size: 2rem; margin: 0.75rem 0 0; }
+.hero h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 0.75rem 0 0; }
 .lead { font-size: 1.05rem; opacity: var(--muted); margin: 0.5rem auto 0; max-width: 32rem; }
 .tag {
   font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
@@ -103,4 +109,50 @@ a { color: inherit; }
 @media (prefers-reduced-motion: no-preference) {
   body { transition: color 0.4s; }
   .card { transition: transform 0.25s; }
+}
+
+.store {
+  display: inline-block; margin: 1.25rem 0 0; padding: 0.5rem 1.1rem; border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px var(--ink); font-weight: 600; font-size: 0.9rem;
+}
+
+/* Sections after the hero. Lines and rings instead of filled panels, so text always sits
+   on the page colors the contrast check tests. */
+section + section, footer {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
+}
+h2 { font-weight: 300; font-size: 1.9rem; line-height: 1.2; margin: 0.3rem 0 0; }
+h3 { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.25rem; }
+section p, footer p { margin: 0; }
+section:not(.hero) .lead { margin: 0.6rem 0 0; }
+.soft { opacity: var(--muted); }
+
+.tiles { display: grid; gap: 0.9rem; margin-top: 1.4rem; }
+.tile {
+  border-radius: 16px; padding: 0.4rem 1rem 1rem;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent);
+}
+.tile p, .how p { opacity: var(--muted); font-size: 0.95rem; }
+.dots { display: flex; gap: 6px; margin: 0.4rem 0 0.5rem; }
+.dots i { width: 14px; height: 14px; border-radius: 50%; }
+
+.how { display: grid; gap: 2.2rem; margin-top: 2rem; }
+.pic { display: block; margin: 0 auto; max-width: 100%; height: auto; color: var(--ink); }
+.pic text { fill: currentColor; }
+.pic .clock { font-weight: 200; font-feature-settings: "tnum"; }
+.how .pic { height: 80px; }
+.streak { margin: 1.5rem 0 0; }
+.caption { opacity: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; }
+section .caption { margin-top: 0.4rem; }
+section .prizes { margin-top: 1.2rem; }
+
+footer .studio { font-size: 1.15rem; font-weight: 300; margin-top: 0.3rem; }
+footer .note { opacity: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; }
+footer .links { margin-top: 1rem; }
+footer .links a { margin-right: 1rem; }
+
+@media (min-width: 700px) {
+  .tiles { grid-template-columns: repeat(3, 1fr); }
+  .how { grid-template-columns: 1fr 1fr; gap: 2.5rem 2.5rem; }
+  .hero h1 { font-size: 2.8rem; }
 }

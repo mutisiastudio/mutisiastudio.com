@@ -4,28 +4,240 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pomoluna</title>
-  <meta name="description" content="Pomoluna, un temporizador de enfoque tranquilo para Android.">
+  <meta name="description" content="Pomoluna, un pomodoro tranquilo para Android.">
   <link rel="icon" href="/assets/img/icon-512.png">
   <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
-  <main class="hero">
-    <img src="/assets/img/icon-512.png" alt="">
-    <h1>Pomoluna</h1>
-    <p class="lead">Un pomodoro tranquilo, con el fondo que más te guste. Elegí uno:</p>
-    <p class="tag">Cielos · se mueven y crecen con tus enfoques</p>
-    <div class="strip" id="skies" role="group" aria-label="Cielos"></div>
-    <div class="plains-head">
-      <p class="tag">Lisos · tranquilos, sin animación</p>
-      <div class="toggle" id="mode-toggle" role="group" aria-label="Claro u oscuro"></div>
-    </div>
-    <div class="strip" id="plains" role="group" aria-label="Lisos"></div>
-    <p id="theme-name" aria-live="polite"></p>
+  <nav class="top" aria-label="Secciones">
+    <a class="brand" href="#hero">Pomoluna</a>
+    <span>
+      <a href="#how-it-works">Cómo funciona</a> ·
+      <a href="#your-goals">Tus metas</a> ·
+      <a href="#studio">Mutisia Studio</a>
+    </span>
+  </nav>
+
+  <main>
+    <section id="hero" class="hero">
+      <img src="/assets/img/icon-512.png" alt="">
+      <h1>Concentrate.<br>Cumplí lo que te propusiste.</h1>
+      <p class="lead">Un pomodoro tranquilo para Android, con el fondo que más te guste.
+        Elegí uno:</p>
+      <p class="tag">Cielos · se mueven y crecen con tus enfoques</p>
+      <div class="strip" id="skies" role="group" aria-label="Cielos"></div>
+      <div class="plains-head">
+        <p class="tag">Lisos · tranquilos, sin animación</p>
+        <div class="toggle" id="mode-toggle" role="group" aria-label="Claro u oscuro"></div>
+      </div>
+      <div class="strip" id="plains" role="group" aria-label="Lisos"></div>
+      <p id="theme-name" aria-live="polite"></p>
+      <!-- When the app is public, swap this for the official Google Play badge. -->
+      <p class="store" data-store-badge>Pronto en Google Play</p>
+    </section>
+
+    <section id="make-it-yours">
+      <p class="tag">Hacela tuya</p>
+      <h2>A tu ritmo, con tus cosas</h2>
+      <div class="tiles">
+        <div class="tile">
+          <h3>Tus tiempos</h3>
+          <p>Cuánto dura el enfoque, el descanso y el descanso largo, y cada
+            cuántos enfoques llega el largo.</p>
+        </div>
+        <div class="tile">
+          <h3>Tus categorías</h3>
+          <div class="dots" aria-hidden="true">
+            <i style="background:#5B8DEF"></i><i style="background:#FFB08A"></i>
+            <i style="background:#7DCE9A"></i><i style="background:#B79BE0"></i>
+          </div>
+          <p>Cada una con su nombre y su color, y tu día pintado con lo que
+            hiciste.</p>
+        </div>
+        <div class="tile">
+          <h3>Tus sonidos y notificaciones</h3>
+          <p>Campanitas suaves, volumen y vibración. La cuenta regresiva te
+            acompaña en la notificación.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works">
+      <p class="tag">Cómo funciona</p>
+      <h2>Un rato de foco, un rato de aire</h2>
+      <p class="lead">La técnica pomodoro divide el trabajo en ratos cortos. Pomoluna
+        lleva el tiempo, así vos solo pensás en lo que estás haciendo.</p>
+      <div class="how">
+        <div>
+          <svg class="pic" viewBox="0 0 280 80" width="280" height="80"
+            aria-hidden="true" focusable="false">
+            <g fill="currentColor">
+              <rect x="0" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
+              <rect x="49.23" y="37" width="13.85" height="6" rx="3" fill-opacity=".3"/>
+              <rect x="67.08" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
+              <rect x="116.31" y="37" width="13.85" height="6" rx="3" fill-opacity=".3"/>
+              <rect x="134.16" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
+              <rect x="183.39" y="37" width="13.85" height="6" rx="3" fill-opacity=".3"/>
+              <rect x="201.24" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
+              <rect x="250.47" y="37" width="29.53" height="6" rx="3" fill-opacity=".55"/>
+            </g>
+            <g class="soft" font-size="11">
+              <text x="56.15" y="26" text-anchor="middle">descanso</text>
+              <text x="0" y="63">enfoque</text>
+              <text x="280" y="63" text-anchor="end">descanso largo</text>
+            </g>
+          </svg>
+          <h3>Un pomodoro</h3>
+          <p>25 minutos de enfoque y 5 de descanso. Cada cuatro enfoques, un
+            descanso largo. Los tiempos los elegís vos.</p>
+        </div>
+        <div>
+          <svg class="pic" viewBox="0 0 182 80" width="182" height="80"
+            aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="sky-stages" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" style="stop-color:var(--top)"/>
+                <stop offset=".5" style="stop-color:var(--mid)"/>
+                <stop offset="1" style="stop-color:var(--bot)"/>
+              </linearGradient>
+            </defs>
+            <g fill="currentColor" stroke="currentColor">
+              <g transform="translate(0 3)">
+                <rect width="42" height="74" rx="8" fill="url(#sky-stages)" stroke="none"/>
+                <path d="M0 57.7 H42 V66 A8 8 0 0 1 34 74 H8 A8 8 0 0 1 0 66 Z"
+                  fill-opacity=".16" stroke="none"/>
+                <rect x=".5" y=".5" width="41" height="73" rx="7.5" fill="none" stroke-opacity=".2"/>
+              </g>
+              <path d="M53.6 34 L58.4 40 L53.6 46" fill="none" stroke-opacity=".45"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <g transform="translate(70 3)">
+                <rect width="42" height="74" rx="8" fill="url(#sky-stages)" stroke="none"/>
+                <path d="M0 35.5 H42 V66 A8 8 0 0 1 34 74 H8 A8 8 0 0 1 0 66 Z"
+                  fill-opacity=".16" stroke="none"/>
+                <rect x=".5" y=".5" width="41" height="73" rx="7.5" fill="none" stroke-opacity=".2"/>
+              </g>
+              <path d="M123.6 34 L128.4 40 L123.6 46" fill="none" stroke-opacity=".45"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <g transform="translate(140 3)">
+                <rect width="42" height="74" rx="8" fill="url(#sky-stages)" stroke="none"/>
+                <path d="M0 8.9 H42 V66 A8 8 0 0 1 34 74 H8 A8 8 0 0 1 0 66 Z"
+                  fill-opacity=".16" stroke="none"/>
+                <rect x=".5" y=".5" width="41" height="73" rx="7.5" fill="none" stroke-opacity=".2"/>
+              </g>
+            </g>
+          </svg>
+          <h3>Tu cielo se llena</h3>
+          <p>Cada enfoque de hoy llena un poco más tu cielo. Ves cuánto
+            avanzaste sin mirar números.</p>
+        </div>
+        <div>
+          <svg class="pic" viewBox="0 0 200 80" width="200" height="80"
+            aria-hidden="true" focusable="false">
+            <text class="clock" x="100" y="29" font-size="30" text-anchor="middle">25:00</text>
+            <g fill="currentColor" stroke="currentColor">
+              <circle cx="39" cy="59" r="16.25" fill-opacity=".12" stroke-opacity=".7"
+                stroke-width="1.5"/>
+              <text x="39" y="65" font-size="17" text-anchor="middle" stroke="none">+</text>
+              <path d="M60 59 H80 M75.6 56.6 L80 59 L75.6 61.4" fill="none" stroke-opacity=".5"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="84.5" y="42.5" width="94" height="33" rx="16.5" fill-opacity=".09"
+                stroke-opacity=".16"/>
+              <circle cx="102.5" cy="59" r="4" fill="#5B8DEF" stroke="none"/>
+              <text x="113.5" y="64" font-size="14" stroke="none">Trabajo</text>
+            </g>
+          </svg>
+          <h3>La tarea</h3>
+          <p>Antes de empezar, tocá el + para elegir la categoría y escribir qué vas a hacer.</p>
+        </div>
+        <div>
+          <svg class="pic" viewBox="0 0 200 80" width="200" height="80"
+            aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="focus-screen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" style="stop-color:var(--top)"/>
+                <stop offset=".5" style="stop-color:var(--mid)"/>
+                <stop offset="1" style="stop-color:var(--bot)"/>
+              </linearGradient>
+            </defs>
+            <g fill="currentColor" stroke="currentColor">
+              <rect x="0" y="2" width="46" height="76" rx="8" fill="url(#focus-screen)" stroke="none"/>
+              <rect x=".5" y="2.5" width="45" height="75" rx="7.5" fill="none" stroke-opacity=".2"/>
+              <path d="M15 13 H31" stroke-opacity=".45" stroke-width="1.5" stroke-linecap="round"/>
+              <text class="clock" x="23" y="30" font-size="11" text-anchor="middle"
+                stroke="none">25:00</text>
+              <rect x="10" y="40" width="26" height="7" rx="3.5" fill-opacity=".18" stroke="none"/>
+              <circle cx="23" cy="57" r="6" fill-opacity=".75" stroke="none"/>
+              <circle cx="9" cy="57" r="2.5" fill-opacity=".5" stroke="none"/>
+              <circle cx="37" cy="57" r="2.5" fill-opacity=".5" stroke="none"/>
+              <path d="M6 71 H40" stroke-opacity=".2"/>
+
+              <rect x="154" y="2" width="46" height="76" rx="8" fill="url(#focus-screen)" stroke="none"/>
+              <rect x="154.5" y="2.5" width="45" height="75" rx="7.5" fill="none" stroke-opacity=".2"/>
+              <text class="clock" x="177" y="44.5" font-size="13" text-anchor="middle"
+                stroke="none">25:00</text>
+
+              <circle cx="100" cy="26" r="4" fill-opacity=".85" stroke="none"/>
+              <circle cx="100" cy="26" r="9" fill="none" stroke-opacity=".5"/>
+              <circle cx="100" cy="26" r="14" fill="none" stroke-opacity=".25"/>
+              <path d="M56 64 H144 M139.6 61.6 L144 64 L139.6 66.4 M60.4 61.6 L56 64 L60.4 66.4"
+                fill="none" stroke-opacity=".5" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round"/>
+            </g>
+            <text class="soft" x="100" y="54" font-size="11" text-anchor="middle">2 toques</text>
+          </svg>
+          <h3>Modo concentración</h3>
+          <p>Tocá dos veces el cielo y queda solo el número. Nada que te distraiga.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="your-goals">
+      <p class="tag">Tus metas</p>
+      <h2>Un poco cada día</h2>
+      <p class="lead">Ponete una meta diaria a tu medida. La racha te muestra cuántos días
+        seguidos la cumpliste, y un comodín te cubre un día difícil.</p>
+      <svg class="pic streak" viewBox="0 0 280 40" width="280" height="40"
+        aria-hidden="true" focusable="false">
+        <g fill="currentColor" stroke="currentColor" stroke-width="0">
+          <circle cx="14" cy="20" r="3.5"/>
+          <circle cx="42" cy="20" r="3.5"/>
+          <circle cx="70" cy="20" r="3.5"/>
+          <circle cx="98" cy="20" r="3.5"/>
+          <g transform="translate(115.5 9.5) scale(.875)">
+            <circle cx="12" cy="12" r="10" fill="none" stroke-opacity=".35" stroke-width="1"/>
+            <path d="M12 2 A10 10 0 0 1 12 22 A5 10 0 0 0 12 2 Z"/>
+          </g>
+          <circle cx="154" cy="20" r="3.5"/>
+          <g transform="rotate(-12 182 20)">
+            <rect x="177.5" y="14" width="9" height="12" rx="1.6" fill="none"
+              stroke-opacity=".85" stroke-width="1.2"/>
+            <path d="M182 17.2 L182.7 19.3 L184.8 20 L182.7 20.7 L182 22.8 L181.3 20.7
+              L179.2 20 L181.3 19.3 Z" fill-opacity=".85"/>
+          </g>
+          <circle cx="210" cy="20" r="3.5"/>
+          <circle cx="238" cy="20" r="3.5"/>
+          <g transform="translate(252 6) scale(1.1667)">
+            <circle cx="12" cy="12" r="12" fill-opacity=".14"/>
+            <circle cx="12" cy="12" r="10"/>
+          </g>
+        </g>
+      </svg>
+      <p class="caption">10 días seguidos · uno con comodín</p>
+      <p class="prizes">En el camino ganás premios con el dibujo de tu cielo: uno chico cada
+        semana y uno grande cada mes.</p>
+    </section>
   </main>
-  <footer>
-    <a href="/es/privacidad/">Privacidad</a>
-    <a href="mailto:contact@mutisiastudio.com">Contacto</a>
-    <a href="/">English</a>
+
+  <footer id="studio">
+    <p class="tag">Hecha por</p>
+    <p class="studio">Mutisia Studio · un estudio chiquito de apps lindas y simples</p>
+    <p class="note">Sin anuncios. Tus datos quedan en tu teléfono.</p>
+    <p class="links">
+      <a href="/es/privacidad/">Privacidad</a>
+      <a href="mailto:contact@mutisiastudio.com">Contacto</a>
+      <a href="/">English</a>
+    </p>
+    <p class="note">© 2026 Mutisia Studio</p>
   </footer>
   <script src="/assets/js/themes.js"></script>
   <script src="/assets/js/theme-picker.js"></script>

@@ -220,8 +220,47 @@ function defaultTheme() {
   return errs;
 }
 
+const HOMES = ["index.html", "es/index.html"];
+const SECTIONS = ["hero", "make-it-yours", "how-it-works", "your-goals", "studio"];
+const idsOf = (html) => [...stripComments(html).matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+
+function sectionsInOrder() {
+  const errs = [];
+  for (const path of HOMES) {
+    const ids = idsOf(read(path));
+    const at = SECTIONS.map((id) => ids.indexOf(id));
+    SECTIONS.forEach((id, i) => { if (at[i] < 0) errs.push(`${path}: missing id="${id}"`); });
+    const found = at.filter((i) => i >= 0);
+    if (found.some((v, i) => i > 0 && v < found[i - 1]))
+      errs.push(`${path}: sections must come in the order ${SECTIONS.join(", ")}`);
+  }
+  return errs;
+}
+
+function sameStructure() {
+  const [en, es] = HOMES.map((p) => stripComments(read(p)));
+  const errs = [];
+  const a = idsOf(en).join(","), b = idsOf(es).join(",");
+  if (a !== b) errs.push(`home pages have different ids:\n    en: ${a}\n    es: ${b}`);
+  const svgs = (h) => (h.match(/<svg\b/g) || []).length;
+  if (svgs(en) !== svgs(es)) errs.push(`home pages have ${svgs(en)} and ${svgs(es)} <svg>`);
+  return errs;
+}
+
+// One notice per page while the app is not public; swapping it for the real badge is one edit.
+function comingSoon() {
+  const errs = [];
+  for (const path of HOMES) {
+    const html = stripComments(read(path));
+    const n = (html.match(/data-store-badge/g) || []).length;
+    if (n !== 1) errs.push(`${path}: expected 1 [data-store-badge], found ${n}`);
+    if (/play\.google\.com/.test(html)) errs.push(`${path}: must not link to play.google.com yet`);
+  }
+  return errs;
+}
+
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
-  themesMatchApp, contrast, defaultTheme];
+  themesMatchApp, contrast, defaultTheme, sectionsInOrder, sameStructure, comingSoon];
 
 let failed = 0;
 for (const check of checks) {
