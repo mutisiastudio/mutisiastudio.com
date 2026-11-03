@@ -274,7 +274,11 @@ const EFFECTS = {
       const fl = 0.85 + 0.15 * Math.sin(t * 4 + hash01(i, 104) * TAU);
       softDot(c, x, y, h * 2.2, "#FFAA50", 0.35 * fl * s);
       c.fillStyle = `rgba(255,${Math.round(150 + 40 * fl)},90,${0.55 + 0.3 * s / 1.3})`;
-      c.beginPath(); c.roundRect(x - w / 2, y - h / 2, w, h, w * 0.45); c.fill();
+      // roundRect is missing in older browsers; fall back to a square lantern.
+      c.beginPath();
+      if (c.roundRect) c.roundRect(x - w / 2, y - h / 2, w, h, w * 0.45);
+      else c.rect(x - w / 2, y - h / 2, w, h);
+      c.fill();
     }
   },
   dorado(c, t, S, u) {

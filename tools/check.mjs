@@ -22,7 +22,7 @@ const stripComments = (s) =>
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
-    if (name === ".git" || name === ".superpowers" || name === "node_modules") continue;
+    if (name === ".git" || name === ".superpowers" || name === "node_modules" || name === "spike") continue;
     const full = join(dir, name);
     if (statSync(full).isDirectory()) walk(full, out);
     else out.push(full);

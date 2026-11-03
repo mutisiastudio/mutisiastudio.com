@@ -174,7 +174,7 @@ footer .links { margin-top: 1rem; }
 footer .links a { margin-right: 1rem; }
 
 /* Privacy policy pages: plain reading text. */
-.doc h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 0.5rem 0 0; }
+.doc h1, .doc h2.title-alt { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 0.5rem 0 0; }
 .doc h2 { font-size: 1.25rem; font-weight: 600; margin: 2rem 0 0.4rem; }
 .doc p, .doc li { margin-top: 0.5rem; }
 .doc ul { padding-left: 1.2rem; margin: 0.4rem 0 0; }
