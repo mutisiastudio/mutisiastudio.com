@@ -64,9 +64,9 @@ html:not(.js) .needs-js { display: none !important; }
 /* Hero: the wordmark card and words on one side, three phones fanned on the other.
    Stacked on a phone, side by side from 900px. */
 .hero { text-align: center; padding-top: 1.5rem; }
-.hero.combo { display: grid; gap: 2.5rem; align-items: center; max-width: 64rem; }
+.hero.combo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; align-items: center; max-width: 64rem; }
 .hero h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 1.6rem 0 0; }
-.combo-text { text-align: center; }
+.combo-text { text-align: center; min-width: 0; }
 
 /* The wordmark: Nunito light, cream, with an orange "by". */
 .mark { display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -86,14 +86,14 @@ html:not(.js) .needs-js { display: none !important; }
 }
 .phone img { display: block; width: 100%; height: auto; }
 
-.fan { display: flex; justify-content: center; align-items: flex-end; }
-.fan .phone { width: 9rem; max-width: 30vw; }
+.fan { display: flex; justify-content: center; align-items: flex-end; min-width: 0; }
+.fan .phone { width: 9rem; max-width: 30vw; flex: 0 1 auto; min-width: 0; }
 .fan .phone:first-child { transform: rotate(-7deg) translate(18%, 4%); }
 .fan .phone:last-child { transform: rotate(7deg) translate(-18%, 4%); }
 .fan .phone.mid { width: 11rem; max-width: 36vw; position: relative; z-index: 1; }
 
 @media (min-width: 900px) {
-  .hero.combo { grid-template-columns: 1fr 1.1fr; padding-top: 2.5rem; }
+  .hero.combo { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); padding-top: 2.5rem; }
   .combo-text { text-align: left; }
   .combo .mark.badge { margin: 0; }
   .combo .lead { margin-left: 0; }
