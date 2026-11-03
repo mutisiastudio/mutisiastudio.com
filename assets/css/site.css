@@ -18,3 +18,85 @@ main, footer {
 }
 
 footer a { margin-right: 1rem; }
+
+/* Theme variables are set on <html> by theme-picker.js; these are the Aurora defaults
+   so the page is readable before the script runs. */
+:root {
+  --top: #06111D;
+  --mid: #0C2131;
+  --bot: #143246;
+  --ink: #E6F2F7;
+  --veil: rgba(0, 0, 0, 0);
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    linear-gradient(var(--veil), var(--veil)),
+    linear-gradient(var(--top), var(--mid) 30%, var(--bot) 70%, var(--mid));
+  background-color: var(--mid);
+}
+
+a { color: inherit; }
+
+.hero { text-align: center; padding-top: 2.5rem; }
+.hero img { width: 60px; height: 60px; border-radius: 15px; }
+.hero h1 { font-weight: 300; font-size: 2rem; margin: 0.75rem 0 0; }
+.lead { font-size: 1.05rem; opacity: 0.85; margin: 0.5rem auto 0; max-width: 32rem; }
+.tag {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
+  opacity: 0.75; margin: 1.5rem 0 0;
+}
+.strip {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 0.9rem; padding: 1.1rem 0 0.4rem;
+}
+
+/* Phone-shaped cards. Real <button>s, so the keyboard works. */
+.card {
+  position: relative; flex: none; width: 64px; height: 112px; border-radius: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.15); padding: 0; cursor: pointer;
+  font: inherit; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+.card span {
+  position: absolute; top: 30px; left: 0; width: 100%; text-align: center;
+  font-weight: 200; font-size: 14px;
+}
+.card.on { transform: scale(1.2); border: 2.5px solid var(--ink); }
+.card:focus-visible, .toggle button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.card.plain { width: 50px; height: 88px; border-radius: 11px; }
+.card.plain span { top: 20px; font-size: 12px; }
+.card.plain i {
+  position: absolute; bottom: 14px; left: 50%; width: 24px; height: 24px;
+  margin-left: -12px; border-radius: 50%; background: currentColor; opacity: 0.18;
+}
+/* Skies scroll sideways inside a phone-wide row so 16 cards stay tidy. */
+#skies { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto;
+  padding: 1.4rem 1rem 0.8rem; scroll-snap-type: x proximity; }
+#skies .card { scroll-snap-align: center; }
+@media (min-width: 700px) {
+  .hero { max-width: 56rem; }
+  #skies { flex-wrap: wrap; justify-content: center; overflow: visible; }
+}
+
+.plains-head {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.plains-head .tag { margin: 0; }
+.toggle {
+  display: inline-flex; border-radius: 999px; padding: 3px;
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.toggle button {
+  font: inherit; font-size: 0.8rem; border: 0; border-radius: 999px; padding: 4px 12px;
+  cursor: pointer; background: transparent; color: var(--ink); opacity: 0.75;
+}
+.toggle button.on { background: var(--ink); color: var(--mid); opacity: 1; }
+#theme-name { font-size: 1rem; margin: 0.9rem 0 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  body { transition: color 0.4s; }
+  .card { transition: transform 0.25s; }
+}

@@ -9,14 +9,25 @@
   <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
-  <main>
+  <main class="hero">
+    <img src="/assets/img/icon-512.png" alt="">
     <h1>Pomoluna</h1>
-    <p>Próximamente.</p>
+    <p class="lead">Un pomodoro tranquilo, con el fondo que más te guste. Elegí uno:</p>
+    <p class="tag">Cielos · se mueven y crecen con tus enfoques</p>
+    <div class="strip" id="skies" role="group" aria-label="Cielos"></div>
+    <div class="plains-head">
+      <p class="tag">Lisos · tranquilos, sin animación</p>
+      <div class="toggle" id="mode-toggle" role="group" aria-label="Claro u oscuro"></div>
+    </div>
+    <div class="strip" id="plains" role="group" aria-label="Lisos"></div>
+    <p id="theme-name" aria-live="polite"></p>
   </main>
   <footer>
     <a href="/es/privacidad/">Privacidad</a>
     <a href="mailto:contact@mutisiastudio.com">Contacto</a>
     <a href="/">English</a>
   </footer>
+  <script src="/assets/js/themes.js"></script>
+  <script src="/assets/js/theme-picker.js"></script>
 </body>
 </html>

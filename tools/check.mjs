@@ -3,6 +3,7 @@
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, dirname, resolve, extname } from "node:path";
 import { fileURLToPath } from "node:url";
+import vm from "node:vm";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFileSync(join(root, p), "utf8");
@@ -92,7 +93,111 @@ function footerLinks() {
   return errs;
 }
 
-const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks];
+const APP = "/home/lucia/projects/pomodoro/app/src/main/java/com/lucia/pomodoro/";
+
+function loadThemes() {
+  const ctx = { window: {} };
+  vm.runInNewContext(read("assets/js/themes.js"), ctx);
+  return ctx.window.THEMES;
+}
+
+const hex6 = (h) => "#" + h.slice(2).toUpperCase();
+
+function themesMatchApp() {
+  const errs = [];
+  let T;
+  try { T = loadThemes(); } catch (e) { return [`themes.js: ${e.message}`]; }
+  const sky = readFileSync(APP + "Sky.kt", "utf8");
+  const color = readFileSync(APP + "ui/theme/Color.kt", "utf8");
+  const words = readFileSync(APP + "Words.kt", "utf8");
+  const rows = [...sky.matchAll(
+    /^\s+(\w+)\("(\w+)", Color\(0x(\w+)\), Color\(0x(\w+)\), Color\(0x(\w+)\), Color\(0x(\w+)\)/gm)];
+  const wordsOf = (cls) => {
+    const i = words.indexOf(`class ${cls}`) >= 0 ? words.indexOf(`class ${cls}`) : words.indexOf(`object ${cls}`);
+    return words.slice(i);
+  };
+  const nameMap = (txt, kind, fn) => {
+    const at = txt.indexOf(`override fun ${fn}`);
+    return Object.fromEntries([...txt.slice(at, at + 1700)
+      .matchAll(new RegExp(`${kind}\\.(\\w+) -> "([^"]+)"`, "g"))].map((m) => [m[1], m[2]]));
+  };
+  const es = wordsOf("SpanishWords"), en = wordsOf("EnglishWords");
+  const esS = nameMap(es, "Sky", "skyName"), enS = nameMap(en, "Sky", "skyName");
+  const esC = nameMap(es, "AppColor", "colorName"), enC = nameMap(en, "AppColor", "colorName");
+  if (T.skies.length !== rows.length) errs.push(`expected ${rows.length} skies, got ${T.skies.length}`);
+  rows.forEach((m, i) => {
+    const t = T.skies[i];
+    if (!t) return;
+    const want = [m[2], hex6(m[3]), hex6(m[4]), hex6(m[5]), hex6(m[6])];
+    const got = [t.id, t.top, t.mid, t.bot, t.ink].map((x) => String(x).toUpperCase());
+    want.forEach((w, k) => { if (w.toUpperCase() !== got[k]) errs.push(`sky #${i} ${m[2]}: ${["id", "top", "mid", "bot", "ink"][k]} ${got[k]} != ${w}`); });
+    if (t.name?.es !== esS[m[1]]) errs.push(`sky ${m[2]}: es name ${t.name?.es} != ${esS[m[1]]}`);
+    if (t.name?.en !== enS[m[1]]) errs.push(`sky ${m[2]}: en name ${t.name?.en} != ${enS[m[1]]}`);
+    if (typeof t.veil !== "string" || !t.veil.startsWith("rgba(")) errs.push(`sky ${m[2]}: veil must be rgba()`);
+    const mv = ["mar", "cerezo", "fogata", "aurora"].includes(m[2]);
+    if (t.moves !== mv) errs.push(`sky ${m[2]}: moves must be ${mv}`);
+  });
+  const ids = ["BLANCO", "AZUL", "SALMON", "VERDE", "LILA"];
+  if (T.plains.length !== ids.length) errs.push(`expected 5 plains, got ${T.plains.length}`);
+  ids.forEach((id, i) => {
+    const t = T.plains[i];
+    if (!t) return;
+    const at = color.indexOf(`    ${id}(`);
+    const blk = color.slice(at, at + 1500);
+    const bg = [...blk.matchAll(/background = Color\(0x(\w+)\)/g)].map((m) => hex6(m[1]));
+    const ink = [...blk.matchAll(/\bink = Color\(0x(\w+)\)/g)].map((m) => hex6(m[1]));
+    const eq = (a, b, what) => { if (String(a).toUpperCase() !== b) errs.push(`plain ${id} ${what}: ${a} != ${b}`); };
+    eq(t.light?.bg, bg[0], "light bg"); eq(t.light?.ink, ink[0], "light ink");
+    eq(t.dark?.bg, bg[1], "dark bg"); eq(t.dark?.ink, ink[1], "dark ink");
+    if (t.id !== id.toLowerCase()) errs.push(`plain ${id}: id ${t.id}`);
+    if (t.name?.es !== esC[id]) errs.push(`plain ${id}: es name ${t.name?.es} != ${esC[id]}`);
+    if (t.name?.en !== enC[id]) errs.push(`plain ${id}: en name ${t.name?.en} != ${enC[id]}`);
+    if (typeof t.veil !== "string" || !t.veil.startsWith("rgba(")) errs.push(`plain ${id}: veil must be rgba()`);
+  });
+  return errs;
+}
+
+function contrast() {
+  let T;
+  try { T = loadThemes(); } catch (e) { return [`themes.js: ${e.message}`]; }
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const lum = (c) => {
+    const [r, g, b] = c.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  const blend = (bg, veil) => {
+    const m = veil.match(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\s*\)/);
+    if (!m) return bg;
+    const a = Number(m[4]);
+    return bg.map((v, i) => v * (1 - a) + Number(m[i + 1]) * a);
+  };
+  const errs = [];
+  const test = (label, ink, bgs, veil) => {
+    for (const bg of bgs) {
+      const r = ratio(rgb(ink), blend(rgb(bg), veil));
+      if (r < 4.5) errs.push(`${label}: ink ${ink} on ${bg}+veil is ${r.toFixed(2)} (< 4.5)`);
+    }
+  };
+  for (const s of T.skies) test(`sky ${s.id}`, s.ink, [s.top, s.mid, s.bot], s.veil);
+  for (const p of T.plains)
+    for (const m of ["light", "dark"]) test(`plain ${p.id} ${m}`, p[m].ink, [p[m].bg], p.veil);
+  return errs;
+}
+
+function defaultTheme() {
+  if (!existsSync(join(root, "assets/js/theme-picker.js"))) return ["missing assets/js/theme-picker.js"];
+  const src = read("assets/js/theme-picker.js");
+  const errs = [];
+  if (!/DEFAULT\s*=\s*\{\s*kind:\s*"skies",\s*id:\s*"aurora"/.test(src))
+    errs.push('theme-picker.js must default to {kind: "skies", id: "aurora"}');
+  if (!/localStorage/.test(src)) errs.push("theme-picker.js must save to localStorage");
+  if (!/themechange/.test(src)) errs.push("theme-picker.js must dispatch themechange");
+  return errs;
+}
+
+const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
+  themesMatchApp, contrast, defaultTheme];
 
 let failed = 0;
 for (const check of checks) {

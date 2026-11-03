@@ -9,14 +9,25 @@
   <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
-  <main>
+  <main class="hero">
+    <img src="/assets/img/icon-512.png" alt="">
     <h1>Pomoluna</h1>
-    <p>Coming soon.</p>
+    <p class="lead">A calm focus timer, with the backdrop you like best. Pick one:</p>
+    <p class="tag">Skies · they move and grow with your focuses</p>
+    <div class="strip" id="skies" role="group" aria-label="Skies"></div>
+    <div class="plains-head">
+      <p class="tag">Plain colors · quiet, no animation</p>
+      <div class="toggle" id="mode-toggle" role="group" aria-label="Light or dark"></div>
+    </div>
+    <div class="strip" id="plains" role="group" aria-label="Plain colors"></div>
+    <p id="theme-name" aria-live="polite"></p>
   </main>
   <footer>
     <a href="/privacy/">Privacy</a>
     <a href="mailto:contact@mutisiastudio.com">Contact</a>
     <a href="/es/">Español</a>
   </footer>
+  <script src="/assets/js/themes.js"></script>
+  <script src="/assets/js/theme-picker.js"></script>
 </body>
 </html>
