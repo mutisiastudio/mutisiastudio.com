@@ -221,11 +221,14 @@
   const EFFECTS = { mar: drawMar, cerezo: drawCerezo, fogata: drawFogata, aurora: drawAurora };
 
   // --- when to draw ---
+  // Light on a phone's battery: at most ~30 frames a second, a canvas no sharper than 2x,
+  // and no canvas memory at all while nothing moves.
+  const FRAME_MS = 33;
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let draw = null, frame = 0, last = 0, t = 0;
+  let draw = null, frame = 0, last = 0, lastDrawn = 0, t = 0, timer = 0;
 
   function resize() {
-    dpr = window.devicePixelRatio || 1;
+    dpr = Math.min(2, window.devicePixelRatio || 1);
     W = canvas.clientWidth;
     H = canvas.clientHeight;
     canvas.width = Math.round(W * dpr);
@@ -238,13 +241,15 @@
   }
 
   function tick(now) {
+    frame = requestAnimationFrame(tick);
     // Time only runs while drawn, so the sky picks up where it stopped (as in the app).
     t += Math.min(0.1, (now - last) / 1000);
     last = now;
+    if (now - lastDrawn < FRAME_MS) return;
+    lastDrawn = now;
     clear();
     ctx.globalAlpha = 1;
     draw(t);
-    frame = requestAnimationFrame(tick);
   }
 
   function update() {
@@ -255,17 +260,26 @@
     frame = 0;
     if (effect !== draw) t = 0;
     draw = effect;
-    if (!run) { clear(); return; }
-    if (canvas.clientWidth !== W || canvas.clientHeight !== H) resize();
-    last = performance.now();
+    if (!run) {
+      canvas.width = canvas.height = 0;
+      return;
+    }
+    resize();
+    last = lastDrawn = performance.now();
     frame = requestAnimationFrame(tick);
   }
 
   document.addEventListener("themechange", update);
   document.addEventListener("visibilitychange", update);
   calm.addEventListener("change", update);
-  // Setting the canvas size also clears it; a running sky redraws on its next frame.
-  window.addEventListener("resize", resize);
-  resize();
+  // Only a change of width resizes the canvas (and only after a pause), so the Android
+  // address bar sliding in and out does not reallocate it or blank a frame.
+  let seenW = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === seenW) return;
+    seenW = window.innerWidth;
+    clearTimeout(timer);
+    timer = setTimeout(() => { if (frame) resize(); }, 150);
+  });
   update();
 })();
