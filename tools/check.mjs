@@ -265,7 +265,7 @@ function noOldPicker() {
   const errs = [];
   for (const f of ["assets/js/theme-picker.js", "assets/js/sky-motion.js"])
     if (existsSync(join(root, f))) errs.push(`${f} must be deleted`);
-  const files = [...HOMES, ...walk(join(root, "assets")).map((f) => f.slice(root.length + 1))]
+  const files = [...PAGES.map((p) => p.path), ...EXTRA_PAGES, ...walk(join(root, "assets")).map((f) => f.slice(root.length + 1))]
     .filter((f) => [".html", ".css", ".js"].includes(extname(f)));
   for (const f of files)
     for (const w of ["theme-picker", "sky-motion", "mode-toggle", "localStorage"])
