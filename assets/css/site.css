@@ -4,11 +4,28 @@
   font-weight: 100 900;
   font-display: swap;
 }
+@font-face {
+  font-family: "Nunito";
+  src: url("/assets/fonts/nunito.ttf") format("truetype");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+
+:root {
+  --ink: #EEF9FB;
+  /* Strength of softened text. tools/check.mjs tests contrast at this value. */
+  --muted: 0.9;
+}
 
 body {
   font-family: "Outfit", system-ui, sans-serif;
   margin: 0;
   line-height: 1.5;
+  min-height: 100vh;
+  color: var(--ink);
+  /* Dark blue at the top, mid blue at the bottom. tools/check.mjs tests the text on each stop. */
+  background: linear-gradient(#0B1530, #12274A 560px, #24507F 40%, #3A6A9C);
+  background-color: #3A6A9C;
 }
 
 section, footer, .top {
@@ -16,33 +33,6 @@ section, footer, .top {
   margin: 0 auto;
   padding: 3rem 1rem;
 }
-
-/* Theme variables are set on <html> by theme-picker.js; these are the Aurora defaults
-   so the page is readable before the script runs. */
-:root {
-  --top: #06111D;
-  --mid: #0C2131;
-  --bot: #143246;
-  --ink: #E6F2F7;
-  --veil: rgba(0, 0, 0, 0);
-  /* Strength of softened text. tools/check.mjs tests contrast at this value. */
-  --muted: 0.9;
-}
-
-body {
-  min-height: 100vh;
-  color: var(--ink);
-  background: linear-gradient(var(--top), var(--mid) 30%, var(--bot) 70%, var(--mid));
-  background-color: var(--mid);
-}
-
-/* The moving sky (sky-motion.js) sits over the page gradient and under the veil, so the
-   veil always stays between the effect and the text. */
-#sky-motion, body::before {
-  position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none;
-}
-#sky-motion { z-index: -2; }
-body::before { content: ""; z-index: -1; background: var(--veil); }
 
 a { color: inherit; }
 
@@ -54,81 +44,65 @@ a { color: inherit; }
 .top a:hover { text-decoration: underline; }
 .top .brand { font-weight: 600; letter-spacing: 0.04em; }
 
-.hero { text-align: center; padding-top: 1.5rem; }
-.hero img { width: 60px; height: 60px; border-radius: 15px; }
-.hero h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 0.75rem 0 0; }
+/* Without JavaScript the sky grids stay empty, so hide them. */
+html:not(.js) .needs-js { display: none !important; }
+
 .lead {
   font-size: 1.05rem; opacity: var(--muted); margin: 0.5rem auto 0; max-width: 32rem;
   text-wrap: balance;
 }
-/* The theme picker is built by JavaScript; without it, hide the empty rows. */
-html:not(.js) .needs-js { display: none !important; }
 .tag {
   font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
   opacity: var(--muted); margin: 1.5rem 0 0;
 }
-.strip {
-  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-  gap: 0.9rem; padding: 1.1rem 0 0.4rem;
-}
-
-/* Phone-shaped cards. Real <button>s, so the keyboard works. */
-.card {
-  position: relative; flex: none; width: 64px; height: 112px; border-radius: 13px;
-  border: 2px solid rgba(255, 255, 255, 0.15); padding: 0; cursor: pointer;
-  font: inherit; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-}
-.card span {
-  position: absolute; top: 30px; left: 0; width: 100%; text-align: center;
-  font-weight: 200; font-size: 14px;
-}
-.card.on { transform: scale(1.2); border: 2.5px solid var(--ink); }
-.card:focus-visible, .toggle button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-.card.plain { width: 50px; height: 88px; border-radius: 11px; }
-.card.plain span { top: 20px; font-size: 12px; }
-.card.plain i {
-  position: absolute; bottom: 14px; left: 50%; width: 24px; height: 24px;
-  margin-left: -12px; border-radius: 50%; background: currentColor; opacity: 0.18;
-}
-/* Skies scroll sideways inside a phone-wide row so 16 cards stay tidy. */
-#skies { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto;
-  padding: 1.4rem 1rem 0.8rem; scroll-snap-type: x proximity; }
-#skies .card { scroll-snap-align: center; }
-@media (min-width: 700px) {
-  .hero { max-width: 56rem; }
-  #skies { flex-wrap: wrap; justify-content: center; overflow: visible; }
-}
-
-.plains-head {
-  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-.plains-head .tag { margin: 0; }
-/* No filled track or pill: label text then sits on the page itself, which the
-   contrast check covers. The ring marks the chosen mode. */
-.toggle {
-  display: inline-flex; border-radius: 999px; padding: 3px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 35%, transparent);
-}
-.toggle button {
-  font: inherit; font-size: 0.8rem; border: 0; border-radius: 999px; padding: 4px 12px;
-  cursor: pointer; background: transparent; color: var(--ink); opacity: var(--muted);
-}
-.toggle button.on { box-shadow: inset 0 0 0 2px var(--ink); font-weight: 600; opacity: 1; }
-#theme-name { font-size: 1rem; margin: 0.9rem 0 0; }
-
-@media (prefers-reduced-motion: no-preference) {
-  body { transition: color 0.4s; }
-  .card { transition: transform 0.25s; }
-}
-
 .store {
   display: inline-block; margin: 1.25rem 0 0; padding: 0.5rem 1.1rem; border-radius: 999px;
   box-shadow: inset 0 0 0 1.5px var(--ink); font-weight: 600; font-size: 0.9rem;
 }
+.soft { opacity: var(--muted); }
 
-/* Sections after the hero. Lines and rings instead of filled panels, so text always sits
-   on the page colors the contrast check tests. */
+/* Hero: the wordmark card and words on one side, three phones fanned on the other.
+   Stacked on a phone, side by side from 900px. */
+.hero { text-align: center; padding-top: 1.5rem; }
+.hero.combo { display: grid; gap: 2.5rem; align-items: center; max-width: 64rem; }
+.hero h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 1.6rem 0 0; }
+.combo-text { text-align: center; }
+
+/* The wordmark: Nunito light, cream, with an orange "by". */
+.mark { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.mark img { width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 0 50px rgba(92, 224, 176, 0.25); }
+.mark .word { font: 300 2.3rem/1 "Nunito", sans-serif; letter-spacing: 0.04em; color: #FFF3C4; }
+.mark .by { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: #E9A55A; }
+.mark.badge {
+  padding: 26px 34px 24px; border-radius: 28px; width: max-content; margin: 0 auto;
+  background: radial-gradient(circle at 50% 40%, #1B2A55, #0A1330 75%);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* A screenshot in a thin phone frame. */
+.phone {
+  width: 9.5rem; border-radius: 22px; overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.18); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.phone img { display: block; width: 100%; height: auto; }
+
+.fan { display: flex; justify-content: center; align-items: flex-end; }
+.fan .phone { width: 9rem; max-width: 30vw; }
+.fan .phone:first-child { transform: rotate(-7deg) translate(18%, 4%); }
+.fan .phone:last-child { transform: rotate(7deg) translate(-18%, 4%); }
+.fan .phone.mid { width: 11rem; max-width: 36vw; position: relative; z-index: 1; }
+
+@media (min-width: 900px) {
+  .hero.combo { grid-template-columns: 1fr 1.1fr; padding-top: 2.5rem; }
+  .combo-text { text-align: left; }
+  .combo .mark.badge { margin: 0; }
+  .combo .lead { margin-left: 0; }
+  .fan .phone { width: 10rem; }
+  .fan .phone.mid { width: 12.5rem; }
+  .hero h1 { font-size: 2.8rem; }
+}
+
+/* Sections after the hero. Lines and rings instead of filled panels. */
 section + section, footer {
   border-top: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
 }
@@ -136,37 +110,66 @@ h2 { font-weight: 300; font-size: 1.9rem; line-height: 1.2; margin: 0.3rem 0 0; 
 h3 { font-size: 1rem; font-weight: 600; margin: 0.75rem 0 0.25rem; }
 section p, footer p { margin: 0; }
 section:not(.hero) .lead { margin: 0.6rem 0 0; }
-.soft { opacity: var(--muted); }
+
+/* How it works: 2 phones a row on a phone, 4 on a computer. */
+.shots { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 1rem; margin-top: 1.8rem; }
+.shots .phone { width: 100%; max-width: 11rem; margin: 0 auto; }
+.shots h3 { margin-top: 0.9rem; }
+.shots p { font-size: 0.9rem; opacity: var(--muted); }
+@media (min-width: 760px) { .shots { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; } }
 
 .tiles { display: grid; gap: 0.9rem; margin-top: 1.4rem; }
 .tile {
   border-radius: 16px; padding: 0.4rem 1rem 1rem;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent);
 }
-.tile p, .how p { opacity: var(--muted); font-size: 0.95rem; }
+.tile p { opacity: var(--muted); font-size: 0.95rem; }
 .dots { display: flex; gap: 6px; margin: 0.4rem 0 0.5rem; }
 .dots i { width: 14px; height: 14px; border-radius: 50%; }
+@media (min-width: 700px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
 
-.how { display: grid; gap: 2.2rem; margin-top: 2rem; }
-.pic { display: block; margin: 0 auto; max-width: 100%; height: auto; color: var(--ink); }
-.pic text { fill: currentColor; }
-.pic .clock { font-weight: 200; font-feature-settings: "tnum"; }
-.how .pic { height: 80px; }
-.streak { margin: 1.5rem 0 0; }
-.caption { opacity: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; }
-section .caption { margin-top: 0.4rem; }
-section .prizes { margin-top: 1.2rem; }
+/* Themes: the grids are filled by script (squares for skies, swatches for plain colors). */
+#themes .tag:not(:first-child) { text-align: center; margin-top: 1.8rem; }
+.sky-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;
+  max-width: 26rem; margin: 1rem auto 0;
+}
+.sky-grid.plains { grid-template-columns: repeat(5, 1fr); }
+@media (min-width: 760px) {
+  .sky-grid { grid-template-columns: repeat(8, 1fr); max-width: 52rem; gap: 0.8rem; }
+  .sky-grid.plains { grid-template-columns: repeat(5, 1fr); max-width: 33rem; }
+}
+.sq { position: relative; margin: 0; }
+.sq canvas, .sq .swatch {
+  display: block; width: 100%; aspect-ratio: 1; border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.sq .swatch { overflow: hidden; display: flex; }
+.swatch i { flex: 1; }
+.sq figcaption { font-size: 0.72rem; margin-top: 0.35rem; opacity: var(--muted); }
+
+/* Cards cut from app screenshots. The radius matches the app's 22dp glass corner. */
+.card-shot {
+  display: block; width: 100%; height: auto; border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.streak-shot { max-width: 20rem; margin: 1.6rem auto 0; }
+.extra { margin-top: 2.6rem; text-align: center; }
+.extra-lead { opacity: var(--muted); max-width: 30rem; margin: 0.5rem auto 0; font-size: 0.95rem; }
+.extra-shots {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start;
+  max-width: 34rem; margin: 1.2rem auto 0;
+}
+/* The achievements list goes on in the app; fade it out instead of cutting it. */
+.card-shot.fade {
+  -webkit-mask-image: linear-gradient(#000 70%, transparent);
+  mask-image: linear-gradient(#000 70%, transparent);
+}
 
 footer .studio { font-size: 1.15rem; font-weight: 300; margin-top: 0.3rem; }
 footer .note { opacity: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; }
 footer .links { margin-top: 1rem; }
 footer .links a { margin-right: 1rem; }
-
-@media (min-width: 700px) {
-  .tiles { grid-template-columns: repeat(3, 1fr); }
-  .how { grid-template-columns: 1fr 1fr; gap: 2.5rem 2.5rem; }
-  .hero h1 { font-size: 2.8rem; }
-}
 
 /* Privacy policy pages: plain reading text. */
 .doc h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 0.5rem 0 0; }

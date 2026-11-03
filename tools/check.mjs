@@ -125,17 +125,6 @@ function previewTags() {
   return errs;
 }
 
-// Small pages for a phone's battery: the sky must not cost more than it has to.
-function motionIsLight() {
-  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
-  const src = stripComments(read(MOTION));
-  const errs = [];
-  if (!/Math\.min\(\s*2\s*,\s*window\.devicePixelRatio/.test(src)) errs.push(`${MOTION}: dpr must be capped at 2`);
-  if (!/FRAME_MS\s*=\s*33/.test(src) || !/< FRAME_MS/.test(src)) errs.push(`${MOTION}: missing the ~30 fps frame-interval guard`);
-  if (!/canvas\.width\s*=\s*canvas\.height\s*=\s*0/.test(src)) errs.push(`${MOTION}: must shrink the canvas to 0 when idle`);
-  return errs;
-}
-
 function footerLinks() {
   const errs = [];
   for (const p of PAGES.filter((p) => existsSync(join(root, p.path)))) {
@@ -186,9 +175,6 @@ function themesMatchApp() {
     want.forEach((w, k) => { if (w.toUpperCase() !== got[k]) errs.push(`sky #${i} ${m[2]}: ${["id", "top", "mid", "bot", "ink"][k]} ${got[k]} != ${w}`); });
     if (t.name?.es !== esS[m[1]]) errs.push(`sky ${m[2]}: es name ${t.name?.es} != ${esS[m[1]]}`);
     if (t.name?.en !== enS[m[1]]) errs.push(`sky ${m[2]}: en name ${t.name?.en} != ${enS[m[1]]}`);
-    if (typeof t.veil !== "string" || !t.veil.startsWith("rgba(")) errs.push(`sky ${m[2]}: veil must be rgba()`);
-    const mv = ["mar", "cerezo", "fogata", "aurora"].includes(m[2]);
-    if (t.moves !== mv) errs.push(`sky ${m[2]}: moves must be ${mv}`);
   });
   const ids = ["BLANCO", "AZUL", "SALMON", "VERDE", "LILA"];
   if (T.plains.length !== ids.length) errs.push(`expected 5 plains, got ${T.plains.length}`);
@@ -205,76 +191,48 @@ function themesMatchApp() {
     if (t.id !== id.toLowerCase()) errs.push(`plain ${id}: id ${t.id}`);
     if (t.name?.es !== esC[id]) errs.push(`plain ${id}: es name ${t.name?.es} != ${esC[id]}`);
     if (t.name?.en !== enC[id]) errs.push(`plain ${id}: en name ${t.name?.en} != ${enC[id]}`);
-    if (typeof t.veil !== "string" || !t.veil.startsWith("rgba(")) errs.push(`plain ${id}: veil must be rgba()`);
   });
   return errs;
 }
 
+// Every text color must reach 4.5 on every stop of the page gradient, plain and softened.
+const BODY_BG = "linear-gradient(#0B1530, #12274A 560px, #24507F 40%, #3A6A9C)";
+
 function contrast() {
-  let T;
-  try { T = loadThemes(); } catch (e) { return [`themes.js: ${e.message}`]; }
+  const css = stripComments(read("assets/css/site.css"));
+  const rule = css.match(/(?<![\w.#-])body\s*\{([^}]*)\}/g) || [];
+  const bg = rule.join(" ").match(/background:\s*([^;]+);/);
+  if (!bg) return ["site.css: the body rule has no background"];
+  if (bg[1].replace(/\s+/g, " ").trim() !== BODY_BG)
+    return [`site.css: body background must be exactly ${BODY_BG}`];
+  const mm = css.match(/--muted:\s*([\d.]+)/);
+  if (!mm) return ["site.css must define --muted (text softening strength)"];
+  const muted = Number(mm[1]);
+  const errs = [];
+  // Any other dimming would escape the test below.
+  for (const m of css.matchAll(/(?<![\w-])opacity:\s*([^;]+);/g))
+    if (!["var(--muted)", "1"].includes(m[1].trim()))
+      errs.push(`site.css: opacity ${m[1].trim()} is not tested; use var(--muted)`);
   const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const lum = (c) => {
     const [r, g, b] = c.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
   const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-  const blend = (bg, veil) => {
-    const m = veil.match(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\s*\)/);
-    if (!m) return bg;
-    const a = Number(m[4]);
-    return bg.map((v, i) => v * (1 - a) + Number(m[i + 1]) * a);
-  };
-  const errs = [];
-  const test = (label, ink, bgs, veil) => {
-    for (const bg of bgs) {
-      const r = ratio(rgb(ink), blend(rgb(bg), veil));
-      if (r < 4.5) errs.push(`${label}: ink ${ink} on ${bg}+veil is ${r.toFixed(2)} (< 4.5)`);
-    }
-  };
-  const css = stripComments(read("assets/css/site.css"));
-  const mm = css.match(/--muted:\s*([\d.]+)/);
-  if (!mm) return ["site.css must define --muted (text softening strength)"];
-  const muted = Number(mm[1]);
-  // Any other dimming would escape the test below (0.18 is the decorative water ball).
-  for (const m of css.matchAll(/(?<![\w-])opacity:\s*([^;]+);/g))
-    if (!["var(--muted)", "1", "0.18"].includes(m[1].trim()))
-      errs.push(`site.css: opacity ${m[1].trim()} is not tested; use var(--muted)`);
-  // Toggle labels must sit on the page, not on a filled track or pill.
-  for (const m of css.matchAll(/(\.toggle[^{]*)\{([^}]*)\}/g))
-    for (const d of m[2].matchAll(/background(?:-color)?:\s*([^;]+);/g))
-      if (d[1].trim() !== "transparent")
-        errs.push(`site.css: ${m[1].trim()} has background ${d[1].trim()}; contrast is not tested on it`);
-  // The card clock "18:42" is exempt: aria-hidden decoration imitating the app's own screen.
-  // Softened text is ink mixed toward the background by --muted.
-  const soften = (ink, bg) => ink.map((v, i) => v * muted + bg[i] * (1 - muted));
-  const test2 = (label, ink, bgs, veil) => {
-    test(label, ink, bgs, veil);
-    for (const bg of bgs) {
-      const b = blend(rgb(bg), veil);
-      const r = ratio(soften(rgb(ink), b), b);
-      if (r < 4.5) errs.push(`${label}: muted ink on ${bg}+veil is ${r.toFixed(2)} (< 4.5)`);
-    }
-  };
-  for (const s of T.skies) test2(`sky ${s.id}`, s.ink, [s.top, s.mid, s.bot], s.veil);
-  for (const p of T.plains)
-    for (const m of ["light", "dark"]) test2(`plain ${p.id} ${m}`, p[m].ink, [p[m].bg], p.veil);
-  return errs;
-}
-
-function defaultTheme() {
-  if (!existsSync(join(root, "assets/js/theme-picker.js"))) return ["missing assets/js/theme-picker.js"];
-  const src = read("assets/js/theme-picker.js");
-  const errs = [];
-  if (!/DEFAULT\s*=\s*\{\s*kind:\s*"skies",\s*id:\s*"aurora"/.test(src))
-    errs.push('theme-picker.js must default to {kind: "skies", id: "aurora"}');
-  if (!/localStorage/.test(src)) errs.push("theme-picker.js must save to localStorage");
-  if (!/themechange/.test(src)) errs.push("theme-picker.js must dispatch themechange");
+  const ink = rgb("#EEF9FB");
+  for (const stop of ["#0B1530", "#12274A", "#24507F", "#3A6A9C"]) {
+    const b = rgb(stop);
+    const r = ratio(ink, b);
+    if (r < 4.5) errs.push(`ink #EEF9FB on ${stop} is ${r.toFixed(2)} (< 4.5)`);
+    const soft = ink.map((v, i) => v * muted + b[i] * (1 - muted));
+    const rm = ratio(soft, b);
+    if (rm < 4.5) errs.push(`muted ink on ${stop} is ${rm.toFixed(2)} (< 4.5)`);
+  }
   return errs;
 }
 
 const HOMES = ["index.html", "es/index.html"];
-const SECTIONS = ["hero", "make-it-yours", "how-it-works", "your-goals", "studio"];
+const SECTIONS = ["hero", "how-it-works", "make-it-yours", "themes", "your-goals", "studio"];
 const idsOf = (html) => [...stripComments(html).matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
 
 function sectionsInOrder() {
@@ -297,6 +255,54 @@ function sameStructure() {
   if (a !== b) errs.push(`home pages have different ids:\n    en: ${a}\n    es: ${b}`);
   const svgs = (h) => (h.match(/<svg\b/g) || []).length;
   if (svgs(en) !== svgs(es)) errs.push(`home pages have ${svgs(en)} and ${svgs(es)} <svg>`);
+  const imgs = (h) => (h.match(/<img\b/g) || []).length;
+  if (imgs(en) !== imgs(es)) errs.push(`home pages have ${imgs(en)} and ${imgs(es)} <img>`);
+  return errs;
+}
+
+// The old picker and moving background are gone for good.
+function noOldPicker() {
+  const errs = [];
+  for (const f of ["assets/js/theme-picker.js", "assets/js/sky-motion.js"])
+    if (existsSync(join(root, f))) errs.push(`${f} must be deleted`);
+  const files = [...HOMES, ...walk(join(root, "assets")).map((f) => f.slice(root.length + 1))]
+    .filter((f) => [".html", ".css", ".js"].includes(extname(f)));
+  for (const f of files)
+    for (const w of ["theme-picker", "sky-motion", "mode-toggle", "localStorage"])
+      if (read(f).includes(w)) errs.push(`${f} mentions ${w}`);
+  return errs;
+}
+
+// Screenshots: real files in the page's own language, with alt text and a size.
+function screenshots() {
+  const errs = [];
+  const names = {};
+  for (const path of HOMES) {
+    const lang = path === "index.html" ? "en" : "es";
+    const html = stripComments(read(path));
+    const hero = (html.match(/<section id="hero"[\s\S]*?<\/section>/) || [""])[0];
+    names[lang] = [];
+    for (const m of html.matchAll(/<img\b[^>]*>/g)) {
+      const tag = m[0];
+      const attr = (n) => (tag.match(new RegExp(`\\s${n}="([^"]*)"`)) || [])[1];
+      const src = attr("src") || "";
+      if (src.startsWith("/assets/img/shots/")) {
+        const [, folder, file] = src.match(/^\/assets\/img\/shots\/([^/]+)\/(.+)$/) || [];
+        if (folder !== lang) errs.push(`${path}: ${src} is not in the ${lang} folder`);
+        if (!existsSync(join(root, src))) errs.push(`${path}: missing file ${src}`);
+        names[lang].push(file);
+        if (!attr("alt")) errs.push(`${path}: ${src} needs non-empty alt`);
+        for (const n of ["width", "height"])
+          if (!attr(n)) errs.push(`${path}: ${src} needs ${n}`);
+      }
+      if (!hero.includes(tag) && attr("loading") !== "lazy")
+        errs.push(`${path}: <img src="${src}"> outside #hero needs loading="lazy"`);
+    }
+  }
+  const a = [...new Set(names.en)].sort().join(","), b = [...new Set(names.es)].sort().join(",");
+  if (a !== b) errs.push(`homes use different screenshots:\n    en: ${a}\n    es: ${b}`);
+  if (names.en.length !== 10 || a.split(",").length !== 10)
+    errs.push(`each home must use the 10 screenshots once (en has ${names.en.length})`);
   return errs;
 }
 
@@ -308,63 +314,6 @@ function comingSoon() {
     const n = (html.match(/data-store-badge/g) || []).length;
     if (n !== 1) errs.push(`${path}: expected 1 [data-store-badge], found ${n}`);
     if (/play\.google\.com/.test(html)) errs.push(`${path}: must not link to play.google.com yet`);
-  }
-  return errs;
-}
-
-const MOTION = "assets/js/sky-motion.js";
-
-// The effect table is `const EFFECTS = { id: draw, ... }` in sky-motion.js.
-function motionCoversMovingSkies() {
-  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
-  const m = stripComments(read(MOTION)).match(/const EFFECTS = \{([^}]*)\}/);
-  if (!m) return [`${MOTION}: missing const EFFECTS = { ... }`];
-  const have = [...m[1].matchAll(/(\w+)\s*:/g)].map((x) => x[1]).sort().join(",");
-  const want = loadThemes().skies.filter((s) => s.moves).map((s) => s.id).sort().join(",");
-  return have === want ? [] : [`${MOTION}: effects for ${have}, skies that move are ${want}`];
-}
-
-function motionRespectsUser() {
-  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
-  const src = stripComments(read(MOTION));
-  const errs = ["prefers-reduced-motion", "visibilitychange", "devicePixelRatio", "themechange"]
-    .filter((w) => !src.includes(w)).map((w) => `${MOTION} must handle ${w}`);
-  for (const path of HOMES)
-    if (!hrefs(read(path)).includes("/" + MOTION)) errs.push(`${path}: must load /${MOTION}`);
-  return errs;
-}
-
-// Wide washes of light (aurora curtains, fire glow, water rays) are declared in WASH
-// as the worst stack of [color, alpha] they can reach; text must still read on top.
-// Small particles (bubbles, petals, sparks) pass behind a letter for a moment and are not tested.
-function motionKeepsContrast() {
-  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
-  const m = stripComments(read(MOTION)).match(/const WASH = (\{[\s\S]*?\n {2}\});/);
-  if (!m) return [`${MOTION}: missing const WASH = { ... };`];
-  const wash = vm.runInNewContext("(" + m[1] + ")");
-  const css = stripComments(read("assets/css/site.css"));
-  const muted = Number(css.match(/--muted:\s*([\d.]+)/)[1]);
-  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-  const lum = (c) => {
-    const [r, g, b] = c.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  };
-  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
-  const over = (bg, c, a) => bg.map((v, i) => v * (1 - a) + c[i] * a);
-  const errs = [];
-  for (const s of loadThemes().skies.filter((s) => s.moves)) {
-    if (!wash[s.id]) { errs.push(`${MOTION}: WASH has no entry for ${s.id}`); continue; }
-    const v = s.veil.match(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\s*\)/);
-    for (const stop of [s.top, s.mid, s.bot]) {
-      let b = rgb(stop);
-      for (const [c, a] of wash[s.id]) b = over(b, rgb(c), a);
-      b = over(b, [v[1], v[2], v[3]].map(Number), Number(v[4]));
-      const ink = rgb(s.ink);
-      const r = ratio(ink, b);
-      const rm = ratio(ink.map((x, i) => x * muted + b[i] * (1 - muted)), b);
-      if (Math.min(r, rm) < 4.5)
-        errs.push(`sky ${s.id}: text over its wash on ${stop} is ${Math.min(r, rm).toFixed(2)} (< 4.5)`);
-    }
   }
   return errs;
 }
@@ -411,8 +360,8 @@ function noInternetClaimIsTrue() {
 }
 
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
-  themesMatchApp, contrast, defaultTheme, sectionsInOrder, sameStructure, comingSoon,
-  motionCoversMovingSkies, motionRespectsUser, motionKeepsContrast, motionIsLight, previewTags,
+  themesMatchApp, contrast, sectionsInOrder, sameStructure, comingSoon, noOldPicker,
+  screenshots, previewTags,
   privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue];
 
 let failed = 0;

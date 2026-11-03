@@ -19,36 +19,61 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/icon-192.png">
   <link rel="apple-touch-icon" href="/assets/img/icon-512.png">
   <link rel="stylesheet" href="/assets/css/site.css">
-  <script src="/assets/js/themes.js"></script>
-  <script src="/assets/js/theme-picker.js"></script>
 </head>
 <body>
-  <canvas id="sky-motion" aria-hidden="true"></canvas>
   <nav class="top" aria-label="Sections">
     <a class="brand" href="#hero">Pomoluna</a>
     <span>
       <a href="#how-it-works">How it works</a> ·
+      <a href="#themes">Themes</a> ·
       <a href="#your-goals">Your goals</a> ·
       <a href="#studio">Mutisia Studio</a>
     </span>
   </nav>
 
   <main>
-    <section id="hero" class="hero">
-      <img src="/assets/img/icon-192.png" alt="">
-      <h1>Focus.<br>Do what you set out to do.</h1>
-      <p class="lead">A calm focus timer for Android, with the backdrop you like best.
-        <span class="needs-js">Pick one:</span></p>
-      <p class="tag needs-js">Skies · they move and grow with your focuses</p>
-      <div class="strip needs-js" id="skies" role="group" aria-label="Skies"></div>
-      <div class="plains-head needs-js">
-        <p class="tag">Plain colors · quiet, no animation</p>
-        <div class="toggle" id="mode-toggle" role="group" aria-label="Light or dark"></div>
+    <section id="hero" class="hero combo">
+      <div class="combo-text">
+        <div class="mark badge"><img src="/assets/img/icon.svg" alt=""><span class="word">pomoluna</span><span class="by">by Mutisia Studio</span></div>
+        <h1>Reach your goals,<br>one pomodoro at a time.</h1>
+        <p class="lead">A calm focus timer for Android, with a sky for every moment.</p>
+        <!-- When the app is public, swap this for the official Google Play badge. -->
+        <p class="store" data-store-badge>Coming soon to Google Play</p>
       </div>
-      <div class="strip needs-js" id="plains" role="group" aria-label="Plain colors"></div>
-      <p id="theme-name" class="needs-js"></p>
-      <!-- When the app is public, swap this for the official Google Play badge. -->
-      <p class="store" data-store-badge>Coming soon to Google Play</p>
+      <div class="fan">
+        <div class="phone"><img src="/assets/img/shots/en/fan-task.webp" alt="Choosing the task, with the Lava sky" width="600" height="1400"></div>
+        <div class="phone mid"><img src="/assets/img/shots/en/fan-clock.webp" alt="The clock, with the Constellation sky and the Scorpio figure" width="600" height="1400"></div>
+        <div class="phone"><img src="/assets/img/shots/en/fan-today.webp" alt="The summary of the day, with the Aurora sky" width="600" height="1400"></div>
+      </div>
+    </section>
+
+    <section id="how-it-works">
+      <p class="tag">How it works</p>
+      <h2>Focus for a while, then breathe</h2>
+      <p class="lead">The pomodoro technique splits your work into short stretches.
+        Pomoluna keeps the time, so you only think about what you're doing.</p>
+      <div class="shots">
+        <div>
+          <div class="phone"><img src="/assets/img/shots/en/clock.webp" alt="The clock screen" width="600" height="1400" loading="lazy"></div>
+          <h3>A pomodoro</h3>
+          <p>25 minutes of focus and 5 of rest. After every four focuses, a long break. You choose the times.</p>
+        </div>
+        <div>
+          <div class="phone"><img src="/assets/img/shots/en/task.webp" alt="Choosing the category of the task" width="600" height="1400" loading="lazy"></div>
+          <h3>The task</h3>
+          <p>Before you start, tap the + to pick a category and write what you'll do.</p>
+        </div>
+        <div>
+          <div class="phone"><img src="/assets/img/shots/en/today.webp" alt="The summary of the day" width="600" height="1400" loading="lazy"></div>
+          <h3>Your day, painted</h3>
+          <p>Each focus adds to your daily goal and fills your sky a little more. At a glance you see where your time went.</p>
+        </div>
+        <div>
+          <div class="phone"><img src="/assets/img/shots/en/focus.webp" alt="Focus mode, showing only the number" width="600" height="1400" loading="lazy"></div>
+          <h3>Focus mode</h3>
+          <p>Tap the sky twice and only the number stays. Nothing to distract you.</p>
+        </div>
+      </div>
     </section>
 
     <section id="make-it-yours">
@@ -77,133 +102,15 @@
       </div>
     </section>
 
-    <section id="how-it-works">
-      <p class="tag">How it works</p>
-      <h2>Focus for a while, then breathe</h2>
-      <p class="lead">The pomodoro technique splits your work into short stretches.
-        Pomoluna keeps the time, so you only think about what you're doing.</p>
-      <div class="how">
-        <div>
-          <svg class="pic" viewBox="0 0 280 80" width="280" height="80"
-            aria-hidden="true" focusable="false">
-            <g fill="currentColor">
-              <rect x="0" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
-              <rect x="49.23" y="37" width="13.85" height="6" rx="3" fill-opacity=".3"/>
-              <rect x="67.08" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
-              <rect x="116.31" y="37" width="13.85" height="6" rx="3" fill-opacity=".3"/>
-              <rect x="134.16" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
-              <rect x="183.39" y="37" width="13.85" height="6" rx="3" fill-opacity=".3"/>
-              <rect x="201.24" y="33" width="45.23" height="14" rx="7" fill-opacity=".8"/>
-              <rect x="250.47" y="37" width="29.53" height="6" rx="3" fill-opacity=".55"/>
-            </g>
-            <g class="soft" font-size="11">
-              <text x="56.15" y="26" text-anchor="middle">break</text>
-              <text x="0" y="63">focus</text>
-              <text x="280" y="63" text-anchor="end">long break</text>
-            </g>
-          </svg>
-          <h3>A pomodoro</h3>
-          <p>25 minutes of focus and 5 of rest. After every four focuses, a long break.
-            You choose the times.</p>
-        </div>
-        <div>
-          <svg class="pic" viewBox="0 0 182 80" width="182" height="80"
-            aria-hidden="true" focusable="false">
-            <defs>
-              <linearGradient id="sky-stages" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" style="stop-color:var(--top)"/>
-                <stop offset=".5" style="stop-color:var(--mid)"/>
-                <stop offset="1" style="stop-color:var(--bot)"/>
-              </linearGradient>
-            </defs>
-            <g fill="currentColor" stroke="currentColor">
-              <g transform="translate(0 3)">
-                <rect width="42" height="74" rx="8" fill="url(#sky-stages)" stroke="none"/>
-                <path d="M0 57.7 H42 V66 A8 8 0 0 1 34 74 H8 A8 8 0 0 1 0 66 Z"
-                  fill-opacity=".16" stroke="none"/>
-                <rect x=".5" y=".5" width="41" height="73" rx="7.5" fill="none" stroke-opacity=".2"/>
-              </g>
-              <path d="M53.6 34 L58.4 40 L53.6 46" fill="none" stroke-opacity=".45"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <g transform="translate(70 3)">
-                <rect width="42" height="74" rx="8" fill="url(#sky-stages)" stroke="none"/>
-                <path d="M0 35.5 H42 V66 A8 8 0 0 1 34 74 H8 A8 8 0 0 1 0 66 Z"
-                  fill-opacity=".16" stroke="none"/>
-                <rect x=".5" y=".5" width="41" height="73" rx="7.5" fill="none" stroke-opacity=".2"/>
-              </g>
-              <path d="M123.6 34 L128.4 40 L123.6 46" fill="none" stroke-opacity=".45"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <g transform="translate(140 3)">
-                <rect width="42" height="74" rx="8" fill="url(#sky-stages)" stroke="none"/>
-                <path d="M0 8.9 H42 V66 A8 8 0 0 1 34 74 H8 A8 8 0 0 1 0 66 Z"
-                  fill-opacity=".16" stroke="none"/>
-                <rect x=".5" y=".5" width="41" height="73" rx="7.5" fill="none" stroke-opacity=".2"/>
-              </g>
-            </g>
-          </svg>
-          <h3>Your sky fills up</h3>
-          <p>Each focus today fills your sky a little more. You see how far you've come
-            without looking at numbers.</p>
-        </div>
-        <div>
-          <svg class="pic" viewBox="0 0 200 80" width="200" height="80"
-            aria-hidden="true" focusable="false">
-            <text class="clock" x="100" y="29" font-size="30" text-anchor="middle">25:00</text>
-            <g fill="currentColor" stroke="currentColor">
-              <circle cx="47" cy="59" r="16.25" fill-opacity=".12" stroke-opacity=".7"
-                stroke-width="1.5"/>
-              <text x="47" y="65" font-size="17" text-anchor="middle" stroke="none">+</text>
-              <path d="M68 59 H88 M83.6 56.6 L88 59 L83.6 61.4" fill="none" stroke-opacity=".5"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <rect x="92.5" y="42.5" width="78" height="33" rx="16.5" fill-opacity=".09"
-                stroke-opacity=".16"/>
-              <circle cx="110.5" cy="59" r="4" fill="#5B8DEF" stroke="none"/>
-              <text x="121.5" y="64" font-size="14" stroke="none">Work</text>
-            </g>
-          </svg>
-          <h3>The task</h3>
-          <p>Before you start, tap the + to pick a category and write what you'll do.</p>
-        </div>
-        <div>
-          <svg class="pic" viewBox="0 0 200 80" width="200" height="80"
-            aria-hidden="true" focusable="false">
-            <defs>
-              <linearGradient id="focus-screen" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" style="stop-color:var(--top)"/>
-                <stop offset=".5" style="stop-color:var(--mid)"/>
-                <stop offset="1" style="stop-color:var(--bot)"/>
-              </linearGradient>
-            </defs>
-            <g fill="currentColor" stroke="currentColor">
-              <rect x="0" y="2" width="46" height="76" rx="8" fill="url(#focus-screen)" stroke="none"/>
-              <rect x=".5" y="2.5" width="45" height="75" rx="7.5" fill="none" stroke-opacity=".2"/>
-              <path d="M15 13 H31" stroke-opacity=".45" stroke-width="1.5" stroke-linecap="round"/>
-              <text class="clock" x="23" y="30" font-size="11" text-anchor="middle"
-                stroke="none">25:00</text>
-              <rect x="10" y="40" width="26" height="7" rx="3.5" fill-opacity=".18" stroke="none"/>
-              <circle cx="23" cy="57" r="6" fill-opacity=".75" stroke="none"/>
-              <circle cx="9" cy="57" r="2.5" fill-opacity=".5" stroke="none"/>
-              <circle cx="37" cy="57" r="2.5" fill-opacity=".5" stroke="none"/>
-              <path d="M6 71 H40" stroke-opacity=".2"/>
-
-              <rect x="154" y="2" width="46" height="76" rx="8" fill="url(#focus-screen)" stroke="none"/>
-              <rect x="154.5" y="2.5" width="45" height="75" rx="7.5" fill="none" stroke-opacity=".2"/>
-              <text class="clock" x="177" y="44.5" font-size="13" text-anchor="middle"
-                stroke="none">25:00</text>
-
-              <circle cx="100" cy="26" r="4" fill-opacity=".85" stroke="none"/>
-              <circle cx="100" cy="26" r="9" fill="none" stroke-opacity=".5"/>
-              <circle cx="100" cy="26" r="14" fill="none" stroke-opacity=".25"/>
-              <path d="M56 64 H144 M139.6 61.6 L144 64 L139.6 66.4 M60.4 61.6 L56 64 L60.4 66.4"
-                fill="none" stroke-opacity=".5" stroke-width="1.5" stroke-linecap="round"
-                stroke-linejoin="round"/>
-            </g>
-            <text class="soft" x="100" y="54" font-size="11" text-anchor="middle">2 taps</text>
-          </svg>
-          <h3>Focus mode</h3>
-          <p>Tap the sky twice and only the number stays. Nothing to distract you.</p>
-        </div>
-      </div>
+    <section id="themes">
+      <p class="tag">Themes</p>
+      <h2>Pick your sky</h2>
+      <p class="lead">Skies that move and fill up with your focuses, or quiet plain colors,
+        light or dark. Change it whenever you like.</p>
+      <p class="tag needs-js">Skies · they move and grow with your focuses</p>
+      <div class="sky-grid needs-js" id="sky-grid"></div>
+      <p class="tag needs-js">Plain colors · quiet, light or dark</p>
+      <div class="sky-grid plains needs-js" id="plain-grid"></div>
     </section>
 
     <section id="your-goals">
@@ -211,41 +118,26 @@
       <h2>A little every day</h2>
       <p class="lead">Set a daily goal that fits you. The streak shows how many days in a
         row you met it, and a joker covers a hard day.</p>
-      <svg class="pic streak" viewBox="0 0 280 40" width="280" height="40"
-        aria-hidden="true" focusable="false">
-        <g fill="currentColor" stroke="currentColor" stroke-width="0">
-          <circle cx="14" cy="20" r="3.5"/>
-          <circle cx="42" cy="20" r="3.5"/>
-          <circle cx="70" cy="20" r="3.5"/>
-          <circle cx="98" cy="20" r="3.5"/>
-          <g transform="translate(115.5 9.5) scale(.875)">
-            <circle cx="12" cy="12" r="10" fill="none" stroke-opacity=".35" stroke-width="1"/>
-            <path d="M12 2 A10 10 0 0 1 12 22 A5 10 0 0 0 12 2 Z"/>
-          </g>
-          <circle cx="154" cy="20" r="3.5"/>
-          <g transform="rotate(-12 182 20)">
-            <rect x="177.5" y="14" width="9" height="12" rx="1.6" fill="none"
-              stroke-opacity=".85" stroke-width="1.2"/>
-            <path d="M182 17.2 L182.7 19.3 L184.8 20 L182.7 20.7 L182 22.8 L181.3 20.7
-              L179.2 20 L181.3 19.3 Z" fill-opacity=".85"/>
-          </g>
-          <circle cx="210" cy="20" r="3.5"/>
-          <circle cx="238" cy="20" r="3.5"/>
-          <g transform="translate(252 6) scale(1.1667)">
-            <circle cx="12" cy="12" r="12" fill-opacity=".14"/>
-            <circle cx="12" cy="12" r="10"/>
-          </g>
-        </g>
-      </svg>
-      <p class="caption">10 days in a row · one covered by a joker</p>
-      <p class="prizes">Along the way you win prizes drawn in your sky: a small one each
-        week, a big one each month.</p>
+      <img class="card-shot streak-shot" src="/assets/img/shots/en/streak.webp" width="984" height="667" loading="lazy"
+        alt="The streak card: 69 days in a row, a record of 116 and 2 jokers">
+      <div class="extra">
+        <p class="tag">And if you like it, there's more</p>
+        <p class="extra-lead">Each week of streak wins you a prize drawn in your sky, and a big one each
+          month. You can collect them in every sky, or ignore them: the app
+          works the same.</p>
+        <div class="extra-shots">
+          <img class="card-shot fade" src="/assets/img/shots/en/collection.webp" width="984" height="796" loading="lazy"
+            alt="The prize collection, one per sky">
+          <img class="card-shot fade" src="/assets/img/shots/en/achievements.webp" width="984" height="796" loading="lazy"
+            alt="The list of achievements, with the date of each one">
+        </div>
+      </div>
     </section>
   </main>
 
   <footer id="studio">
     <p class="tag">Made by</p>
-    <p class="studio">Mutisia Studio · a tiny studio making simple, lovely apps</p>
+    <p class="studio">Mutisia Studio</p>
     <p class="note">No ads. Your data stays on your phone.</p>
     <p class="links">
       <a href="/privacy/">Privacy</a>
@@ -254,6 +146,5 @@
     </p>
     <p class="note">© 2026 Mutisia Studio</p>
   </footer>
-  <script src="/assets/js/sky-motion.js"></script>
 </body>
 </html>
