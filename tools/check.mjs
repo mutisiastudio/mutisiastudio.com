@@ -196,7 +196,7 @@ function themesMatchApp() {
 }
 
 // Every text color must reach 4.5 on every stop of the page gradient, plain and softened.
-const BODY_BG = "linear-gradient(#0B1530, #12274A 560px, #24507F 40%, #3A6A9C)";
+const BODY_BG = "linear-gradient(#0B1530, #12274A 560px, #24507F max(40%, 760px), #3A6A9C)";
 
 function contrast() {
   const css = stripComments(read("assets/css/site.css"));
@@ -265,7 +265,8 @@ function noOldPicker() {
   const errs = [];
   for (const f of ["assets/js/theme-picker.js", "assets/js/sky-motion.js"])
     if (existsSync(join(root, f))) errs.push(`${f} must be deleted`);
-  const files = [...PAGES.map((p) => p.path), ...EXTRA_PAGES, ...walk(join(root, "assets")).map((f) => f.slice(root.length + 1))]
+  const assets = walk(join(root, "assets")).map((f) => f.slice(root.length + 1));
+  const files = [...PAGES.map((p) => p.path), ...EXTRA_PAGES, ...assets]
     .filter((f) => [".html", ".css", ".js"].includes(extname(f)));
   for (const f of files)
     for (const w of ["theme-picker", "sky-motion", "mode-toggle", "localStorage"])

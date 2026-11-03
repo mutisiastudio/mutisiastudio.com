@@ -24,7 +24,7 @@ body {
   min-height: 100vh;
   color: var(--ink);
   /* Dark blue at the top, mid blue at the bottom. tools/check.mjs tests the text on each stop. */
-  background: linear-gradient(#0B1530, #12274A 560px, #24507F 40%, #3A6A9C);
+  background: linear-gradient(#0B1530, #12274A 560px, #24507F max(40%, 760px), #3A6A9C);
   background-color: #3A6A9C;
 }
 
