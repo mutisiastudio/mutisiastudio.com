@@ -24,9 +24,11 @@
     try { localStorage.setItem(KEY, JSON.stringify(current)); } catch (e) { /* not saved, still works */ }
   }
 
-  function applyTheme(kind, id, mode, remember) {
+  // Sets the page colors only. Runs once from <head>, before the first paint, so a saved
+  // theme shows right away instead of fading in from Aurora's colors.
+  function paint(kind, id, mode) {
     const t = find(kind, id);
-    if (!t) return;
+    if (!t) return null;
     const m = mode === "dark" ? "dark" : "light";
     let top, mid, bot, ink;
     if (kind === "skies") {
@@ -41,6 +43,12 @@
     s.setProperty("--bot", bot);
     s.setProperty("--ink", ink);
     s.setProperty("--veil", t.veil);
+    return m;
+  }
+
+  function applyTheme(kind, id, mode, remember) {
+    const m = paint(kind, id, mode);
+    if (!m) return;
     current = { kind, id, mode: m };
     if (remember) save();
     markRows();
@@ -50,10 +58,7 @@
   window.currentTheme = () => Object.assign({}, current);
   window.applyTheme = applyTheme;
 
-  const skiesRow = document.getElementById("skies");
-  const plainsRow = document.getElementById("plains");
-  const modeBox = document.getElementById("mode-toggle");
-  const nameBox = document.getElementById("theme-name");
+  let skiesRow, plainsRow, modeBox, nameBox;
 
   function card(kind, t) {
     const b = document.createElement("button");
@@ -105,22 +110,34 @@
     }
   }
 
-  if (skiesRow) T.skies.forEach((t) => skiesRow.appendChild(card("skies", t)));
-  if (plainsRow) T.plains.forEach((t) => plainsRow.appendChild(card("plains", t)));
-  if (modeBox) {
-    ["light", "dark"].forEach((m) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.dataset.mode = m;
-      b.textContent = MODE_LABEL[m];
-      b.addEventListener("click", () => applyTheme(current.kind, current.id, m, true));
-      modeBox.appendChild(b);
-    });
+  const start = load();
+  paint(start.kind, start.id, start.mode);
+  current = Object.assign({}, start);
+
+  function init() {
+    skiesRow = document.getElementById("skies");
+    plainsRow = document.getElementById("plains");
+    modeBox = document.getElementById("mode-toggle");
+    nameBox = document.getElementById("theme-name");
+    if (skiesRow) T.skies.forEach((t) => skiesRow.appendChild(card("skies", t)));
+    if (plainsRow) T.plains.forEach((t) => plainsRow.appendChild(card("plains", t)));
+    if (modeBox) {
+      ["light", "dark"].forEach((m) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.dataset.mode = m;
+        b.textContent = MODE_LABEL[m];
+        b.addEventListener("click", () => applyTheme(current.kind, current.id, m, true));
+        modeBox.appendChild(b);
+      });
+    }
+
+    applyTheme(start.kind, start.id, start.mode, false);
+    // Bring the chosen sky into view in the sideways row (without moving the page).
+    const chosen = skiesRow && skiesRow.querySelector(".card.on");
+    if (chosen) skiesRow.scrollLeft = chosen.offsetLeft - skiesRow.clientWidth / 2 + chosen.offsetWidth / 2;
   }
 
-  const start = load();
-  applyTheme(start.kind, start.id, start.mode, false);
-  // Bring the chosen sky into view in the sideways row (without moving the page).
-  const chosen = skiesRow && skiesRow.querySelector(".card.on");
-  if (chosen) skiesRow.scrollLeft = chosen.offsetLeft - skiesRow.clientWidth / 2 + chosen.offsetWidth / 2;
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();

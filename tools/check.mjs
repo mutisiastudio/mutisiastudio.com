@@ -259,8 +259,66 @@ function comingSoon() {
   return errs;
 }
 
+const MOTION = "assets/js/sky-motion.js";
+
+// The effect table is `const EFFECTS = { id: draw, ... }` in sky-motion.js.
+function motionCoversMovingSkies() {
+  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
+  const m = stripComments(read(MOTION)).match(/const EFFECTS = \{([^}]*)\}/);
+  if (!m) return [`${MOTION}: missing const EFFECTS = { ... }`];
+  const have = [...m[1].matchAll(/(\w+)\s*:/g)].map((x) => x[1]).sort().join(",");
+  const want = loadThemes().skies.filter((s) => s.moves).map((s) => s.id).sort().join(",");
+  return have === want ? [] : [`${MOTION}: effects for ${have}, skies that move are ${want}`];
+}
+
+function motionRespectsUser() {
+  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
+  const src = stripComments(read(MOTION));
+  const errs = ["prefers-reduced-motion", "visibilitychange", "devicePixelRatio", "themechange"]
+    .filter((w) => !src.includes(w)).map((w) => `${MOTION} must handle ${w}`);
+  for (const path of HOMES)
+    if (!hrefs(read(path)).includes("/" + MOTION)) errs.push(`${path}: must load /${MOTION}`);
+  return errs;
+}
+
+// Wide washes of light (aurora curtains, fire glow, water rays) are declared in WASH
+// as the worst stack of [color, alpha] they can reach; text must still read on top.
+// Small particles (bubbles, petals, sparks) pass behind a letter for a moment and are not tested.
+function motionKeepsContrast() {
+  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
+  const m = stripComments(read(MOTION)).match(/const WASH = (\{[\s\S]*?\n {2}\});/);
+  if (!m) return [`${MOTION}: missing const WASH = { ... };`];
+  const wash = vm.runInNewContext("(" + m[1] + ")");
+  const css = stripComments(read("assets/css/site.css"));
+  const muted = Number(css.match(/--muted:\s*([\d.]+)/)[1]);
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const lum = (c) => {
+    const [r, g, b] = c.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  const over = (bg, c, a) => bg.map((v, i) => v * (1 - a) + c[i] * a);
+  const errs = [];
+  for (const s of loadThemes().skies.filter((s) => s.moves)) {
+    if (!wash[s.id]) { errs.push(`${MOTION}: WASH has no entry for ${s.id}`); continue; }
+    const v = s.veil.match(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\s*\)/);
+    for (const stop of [s.top, s.mid, s.bot]) {
+      let b = rgb(stop);
+      for (const [c, a] of wash[s.id]) b = over(b, rgb(c), a);
+      b = over(b, [v[1], v[2], v[3]].map(Number), Number(v[4]));
+      const ink = rgb(s.ink);
+      const r = ratio(ink, b);
+      const rm = ratio(ink.map((x, i) => x * muted + b[i] * (1 - muted)), b);
+      if (Math.min(r, rm) < 4.5)
+        errs.push(`sky ${s.id}: text over its wash on ${stop} is ${Math.min(r, rm).toFixed(2)} (< 4.5)`);
+    }
+  }
+  return errs;
+}
+
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
-  themesMatchApp, contrast, defaultTheme, sectionsInOrder, sameStructure, comingSoon];
+  themesMatchApp, contrast, defaultTheme, sectionsInOrder, sameStructure, comingSoon,
+  motionCoversMovingSkies, motionRespectsUser, motionKeepsContrast];
 
 let failed = 0;
 for (const check of checks) {

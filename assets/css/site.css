@@ -32,11 +32,17 @@ section, footer, .top {
 body {
   min-height: 100vh;
   color: var(--ink);
-  background:
-    linear-gradient(var(--veil), var(--veil)),
-    linear-gradient(var(--top), var(--mid) 30%, var(--bot) 70%, var(--mid));
+  background: linear-gradient(var(--top), var(--mid) 30%, var(--bot) 70%, var(--mid));
   background-color: var(--mid);
 }
+
+/* The moving sky (sky-motion.js) sits over the page gradient and under the veil, so the
+   veil always stays between the effect and the text. */
+#sky-motion, body::before {
+  position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none;
+}
+#sky-motion { z-index: -2; }
+body::before { content: ""; z-index: -1; background: var(--veil); }
 
 a { color: inherit; }
 
