@@ -179,9 +179,27 @@ function contrast() {
       if (r < 4.5) errs.push(`${label}: ink ${ink} on ${bg}+veil is ${r.toFixed(2)} (< 4.5)`);
     }
   };
-  for (const s of T.skies) test(`sky ${s.id}`, s.ink, [s.top, s.mid, s.bot], s.veil);
+  const css = stripComments(read("assets/css/site.css"));
+  const mm = css.match(/--muted:\s*([\d.]+)/);
+  if (!mm) return ["site.css must define --muted (text softening strength)"];
+  const muted = Number(mm[1]);
+  // Any other dimming would escape the test below (0.18 is the decorative water ball).
+  for (const m of css.matchAll(/(?<![\w-])opacity:\s*([^;]+);/g))
+    if (!["var(--muted)", "1", "0.18"].includes(m[1].trim()))
+      errs.push(`site.css: opacity ${m[1].trim()} is not tested; use var(--muted)`);
+  // Softened text is ink mixed toward the background by --muted.
+  const soften = (ink, bg) => ink.map((v, i) => v * muted + bg[i] * (1 - muted));
+  const test2 = (label, ink, bgs, veil) => {
+    test(label, ink, bgs, veil);
+    for (const bg of bgs) {
+      const b = blend(rgb(bg), veil);
+      const r = ratio(soften(rgb(ink), b), b);
+      if (r < 4.5) errs.push(`${label}: muted ink on ${bg}+veil is ${r.toFixed(2)} (< 4.5)`);
+    }
+  };
+  for (const s of T.skies) test2(`sky ${s.id}`, s.ink, [s.top, s.mid, s.bot], s.veil);
   for (const p of T.plains)
-    for (const m of ["light", "dark"]) test(`plain ${p.id} ${m}`, p[m].ink, [p[m].bg], p.veil);
+    for (const m of ["light", "dark"]) test2(`plain ${p.id} ${m}`, p[m].ink, [p[m].bg], p.veil);
   return errs;
 }
 

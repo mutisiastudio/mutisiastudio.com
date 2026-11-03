@@ -27,6 +27,8 @@ footer a { margin-right: 1rem; }
   --bot: #143246;
   --ink: #E6F2F7;
   --veil: rgba(0, 0, 0, 0);
+  /* Strength of softened text. tools/check.mjs tests contrast at this value. */
+  --muted: 0.9;
 }
 
 body {
@@ -43,10 +45,10 @@ a { color: inherit; }
 .hero { text-align: center; padding-top: 2.5rem; }
 .hero img { width: 60px; height: 60px; border-radius: 15px; }
 .hero h1 { font-weight: 300; font-size: 2rem; margin: 0.75rem 0 0; }
-.lead { font-size: 1.05rem; opacity: 0.85; margin: 0.5rem auto 0; max-width: 32rem; }
+.lead { font-size: 1.05rem; opacity: var(--muted); margin: 0.5rem auto 0; max-width: 32rem; }
 .tag {
   font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
-  opacity: 0.75; margin: 1.5rem 0 0;
+  opacity: var(--muted); margin: 1.5rem 0 0;
 }
 .strip {
   display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
@@ -91,7 +93,7 @@ a { color: inherit; }
 }
 .toggle button {
   font: inherit; font-size: 0.8rem; border: 0; border-radius: 999px; padding: 4px 12px;
-  cursor: pointer; background: transparent; color: var(--ink); opacity: 0.75;
+  cursor: pointer; background: transparent; color: var(--ink); opacity: var(--muted);
 }
 .toggle button.on { background: var(--ink); color: var(--mid); opacity: 1; }
 #theme-name { font-size: 1rem; margin: 0.9rem 0 0; }
