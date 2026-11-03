@@ -359,9 +359,40 @@ function noInternetClaimIsTrue() {
     ? ["manifest declares INTERNET: the privacy policy now lies"] : [];
 }
 
+const GRID_JS = "assets/js/sky-grid.js";
+
+function gridCoversEverySky() {
+  if (!existsSync(join(root, GRID_JS))) return [`${GRID_JS} is missing`];
+  const ids = loadThemes().skies.map((s) => s.id).sort();
+  const m = read(GRID_JS).match(/^const EFFECTS = \{([\s\S]*?)^\};/m);
+  if (!m) return [`${GRID_JS}: no top-level const EFFECTS`];
+  const keys = [...m[1].matchAll(/^  (\w+)\(/gm)].map((k) => k[1]).sort();
+  return JSON.stringify(keys) === JSON.stringify(ids)
+    ? [] : [`EFFECTS keys ${keys} differ from sky ids ${ids}`];
+}
+
+function gridIsLight() {
+  if (!existsSync(join(root, GRID_JS))) return [`${GRID_JS} is missing`];
+  const js = read(GRID_JS);
+  const need = ["Math.min(2, window.devicePixelRatio", "< FRAME_MS", "const FRAME_MS = 33",
+    "IntersectionObserver", "visibilitychange", "prefers-reduced-motion"];
+  const errs = need.filter((n) => !js.includes(n)).map((n) => `${GRID_JS}: missing ${n}`);
+  const loops = js.match(/requestAnimationFrame\(tick\)/g) || [];
+  if (loops.length !== 1) errs.push(`${GRID_JS}: expected one requestAnimationFrame(tick)`);
+  for (const h of HOMES) {
+    const html = read(h);
+    const a = html.indexOf('src="/assets/js/themes.js"');
+    const b = html.indexOf('src="/assets/js/sky-grid.js" defer');
+    if (a < 0 || b < a) errs.push(`${h}: must load themes.js then sky-grid.js (defer)`);
+    if (!/<head>[\s\S]*classList\.add\("js"\)[\s\S]*<\/head>/.test(html))
+      errs.push(`${h}: no inline script adding the js class in <head>`);
+  }
+  return errs;
+}
+
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
   themesMatchApp, contrast, sectionsInOrder, sameStructure, comingSoon, noOldPicker,
-  screenshots, previewTags,
+  screenshots, previewTags, gridCoversEverySky, gridIsLight,
   privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue];
 
 let failed = 0;
