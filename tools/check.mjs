@@ -316,9 +316,49 @@ function motionKeepsContrast() {
   return errs;
 }
 
+const MANIFEST = "/home/lucia/projects/pomodoro/app/src/main/AndroidManifest.xml";
+const PRIVACY = ["privacy/index.html", "es/privacidad/index.html"];
+
+function manifestPermissions() {
+  const xml = readFileSync(MANIFEST, "utf8");
+  return [...xml.matchAll(/<uses-permission[^>]*?android:name="android\.permission\.([A-Z_]+)"/g)]
+    .map((m) => m[1]);
+}
+
+function privacyNamesEveryPermission() {
+  const errs = [];
+  const perms = manifestPermissions();
+  if (!perms.length) errs.push("no permissions found in the manifest");
+  for (const p of PRIVACY.filter((p) => existsSync(join(root, p)))) {
+    const html = read(p);
+    for (const perm of perms)
+      if (!html.includes(perm)) errs.push(`${p}: does not name ${perm}`);
+  }
+  return errs;
+}
+
+function privacyBasics() {
+  const errs = [];
+  for (const p of PRIVACY) {
+    const html = existsSync(join(root, p)) ? read(p) : "";
+    for (const need of ["contact@mutisiastudio.com", "Mutisia Studio", "Leipzig"])
+      if (!html.includes(need)) errs.push(`${p}: missing "${need}"`);
+    if (!/<time datetime="\d{4}-\d{2}-\d{2}">/.test(html))
+      errs.push(`${p}: missing <time datetime="YYYY-MM-DD">`);
+  }
+  return errs;
+}
+
+// The policy says the app has no internet access; fail if the manifest ever disagrees.
+function noInternetClaimIsTrue() {
+  return manifestPermissions().includes("INTERNET")
+    ? ["manifest declares INTERNET: the privacy policy now lies"] : [];
+}
+
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
   themesMatchApp, contrast, defaultTheme, sectionsInOrder, sameStructure, comingSoon,
-  motionCoversMovingSkies, motionRespectsUser, motionKeepsContrast];
+  motionCoversMovingSkies, motionRespectsUser, motionKeepsContrast,
+  privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue];
 
 let failed = 0;
 for (const check of checks) {

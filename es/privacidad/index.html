@@ -4,19 +4,93 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Política de privacidad - Pomoluna</title>
-  <meta name="description" content="Política de privacidad de Pomoluna.">
+  <meta name="description" content="Política de privacidad de Pomoluna, un temporizador de enfoque de Mutisia Studio.">
   <link rel="icon" href="/assets/img/icon-512.png">
   <link rel="stylesheet" href="/assets/css/site.css">
+  <script src="/assets/js/themes.js"></script>
+  <script src="/assets/js/theme-picker.js"></script>
 </head>
 <body>
+  <nav class="top" aria-label="Sitio">
+    <a class="brand" href="/es/">Pomoluna</a>
+  </nav>
+
   <main>
-    <h1>Política de privacidad</h1>
-    <p>Texto provisorio.</p>
+    <section class="doc">
+      <h1>Política de privacidad</h1>
+      <p class="soft">Pomoluna, un temporizador de enfoque para Android de Mutisia Studio.
+        Última actualización: <time datetime="2026-11-03">3 de noviembre de 2026</time>.
+        <a href="/privacy/">Read in English</a>.</p>
+
+      <h2>En pocas palabras</h2>
+      <p>Pomoluna no junta tus datos. Ni siquiera puede mandarlos a ningún lado, porque
+        la app no tiene acceso a internet. No hay publicidad, ni estadísticas, ni
+        reportes de errores, ni cuentas de usuario.</p>
+
+      <h2>Tus datos quedan en tu teléfono</h2>
+      <p>Tus enfoques, categorías y ajustes se guardan solo en tu teléfono. Nosotros
+        (Mutisia Studio) nunca los recibimos ni podemos verlos.</p>
+
+      <h2>Sin internet</h2>
+      <p>Pomoluna no le pide a Android el permiso de usar internet
+        (<code>INTERNET</code>), así que la app no puede enviar nada hacia afuera.</p>
+
+      <h2>Lo que Pomoluna no tiene</h2>
+      <ul>
+        <li>Nada de publicidad.</li>
+        <li>Nada de estadísticas (herramientas que cuentan cómo se usa una app).</li>
+        <li>Nada de reportes de errores.</li>
+        <li>Nada de cuentas ni inicios de sesión.</li>
+      </ul>
+
+      <h2>Copia automática de Android</h2>
+      <p>Android puede hacer una copia de tus apps en tu cuenta de Google de forma
+        automática. Si lo tenés activado en el teléfono, puede guardar ahí los datos de
+        Pomoluna (tu historial, categorías y ajustes) y pasarlos a un teléfono nuevo.
+        Eso lo hace Google, con sus propias reglas, no nosotros. Podés apagarlo en los
+        ajustes de Android.</p>
+
+      <h2>Tus propias copias</h2>
+      <p>En Ajustes &rarr; Datos podés guardar una copia (<code>.json</code>) o una
+        planilla (<code>.csv</code>) de tu historial. Vos elegís dónde se guarda el
+        archivo y no se envía a ningún lado. Lo que hagas con ese archivo depende de
+        vos.</p>
+
+      <h2>Permisos que pide la app</h2>
+      <p>Un permiso es algo que Android le deja hacer a la app, a veces después de
+        preguntarte. Estos son todos los permisos que declara Pomoluna:</p>
+      <ul>
+        <li><code>POST_NOTIFICATIONS</code>: mostrar una notificación cuando termina
+          cada etapa, y la cuenta regresiva mientras corre el reloj.</li>
+        <li><code>FOREGROUND_SERVICE</code> y
+          <code>FOREGROUND_SERVICE_SPECIAL_USE</code>: que el reloj siga corriendo con
+          la app cerrada. Mientras tanto, Android muestra su notificación.</li>
+        <li><code>SCHEDULE_EXACT_ALARM</code> (Android 12 y anteriores) y
+          <code>USE_EXACT_ALARM</code> (Android 13 y posteriores): que el aviso de fin
+          de etapa llegue a tiempo.</li>
+        <li><code>VIBRATE</code>: vibrar cuando termina una etapa.</li>
+        <li><code>WAKE_LOCK</code>: mantener el procesador despierto mientras corre el
+          reloj, para que no se frene.</li>
+      </ul>
+      <p>Ninguno de estos permisos le da a la app acceso a tus contactos, fotos,
+        ubicación, micrófono ni cámara.</p>
+
+      <h2>Responsable</h2>
+      <p>Mutisia Studio (Lucia Prado), Leipzig, Alemania.</p>
+
+      <h2>Contacto</h2>
+      <p>¿Dudas? Escribinos a
+        <a href="mailto:contact@mutisiastudio.com">contact@mutisiastudio.com</a>.</p>
+    </section>
   </main>
+
   <footer>
-    <a href="/es/privacidad/">Privacidad</a>
-    <a href="mailto:contact@mutisiastudio.com">Contacto</a>
-    <a href="/privacy/">English</a>
+    <p class="links">
+      <a href="/es/privacidad/">Privacidad</a>
+      <a href="mailto:contact@mutisiastudio.com">Contacto</a>
+      <a href="/privacy/">English</a>
+    </p>
+    <p class="note">© 2026 Mutisia Studio</p>
   </footer>
 </body>
 </html>
