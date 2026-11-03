@@ -7,6 +7,8 @@
   const lang = document.documentElement.lang === "es" ? "es" : "en";
   const MODE_LABEL = { en: { light: "Light", dark: "Dark" }, es: { light: "Claro", dark: "Oscuro" } }[lang];
   const root = document.documentElement;
+  // Lets the CSS hide the theme picker for visitors without JavaScript.
+  root.classList.add("js");
 
   let current = Object.assign({}, DEFAULT);
 
@@ -133,6 +135,8 @@
     }
 
     applyTheme(start.kind, start.id, start.mode, false);
+    // Announce the name only on later choices, not on the first fill.
+    if (nameBox) nameBox.setAttribute("aria-live", "polite");
     // Bring the chosen sky into view in the sideways row (without moving the page).
     const chosen = skiesRow && skiesRow.querySelector(".card.on");
     if (chosen) skiesRow.scrollLeft = chosen.offsetLeft - skiesRow.clientWidth / 2 + chosen.offsetWidth / 2;

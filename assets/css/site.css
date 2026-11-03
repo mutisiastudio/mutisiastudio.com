@@ -57,7 +57,12 @@ a { color: inherit; }
 .hero { text-align: center; padding-top: 1.5rem; }
 .hero img { width: 60px; height: 60px; border-radius: 15px; }
 .hero h1 { font-weight: 200; font-size: 2rem; line-height: 1.15; margin: 0.75rem 0 0; }
-.lead { font-size: 1.05rem; opacity: var(--muted); margin: 0.5rem auto 0; max-width: 32rem; }
+.lead {
+  font-size: 1.05rem; opacity: var(--muted); margin: 0.5rem auto 0; max-width: 32rem;
+  text-wrap: balance;
+}
+/* The theme picker is built by JavaScript; without it, hide the empty rows. */
+html:not(.js) .needs-js { display: none !important; }
 .tag {
   font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
   opacity: var(--muted); margin: 1.5rem 0 0;

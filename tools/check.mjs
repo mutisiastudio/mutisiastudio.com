@@ -8,6 +8,7 @@ import vm from "node:vm";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFileSync(join(root, p), "utf8");
 
+const EXTRA_PAGES = ["404.html"];
 const PAGES = [
   { path: "index.html", lang: "en", pair: "/es/", privacy: "/privacy/" },
   { path: "es/index.html", lang: "es", pair: "/", privacy: "/es/privacidad/" },
@@ -35,6 +36,8 @@ const hrefs = (html) =>
 function pagesExist() {
   const errs = PAGES.filter((p) => !existsSync(join(root, p.path)))
     .map((p) => `missing page ${p.path}`);
+  for (const f of [...EXTRA_PAGES, ".nojekyll"])
+    if (!existsSync(join(root, f))) errs.push(`missing ${f}`);
   if (!existsSync(join(root, "CNAME"))) errs.push("missing CNAME");
   else if (!/^mutisiastudio\.com\n?$/.test(read("CNAME")))
     errs.push("CNAME must contain exactly mutisiastudio.com");
@@ -54,7 +57,8 @@ function langAndPairs() {
 
 function linksResolve() {
   const errs = [];
-  for (const p of PAGES.filter((p) => existsSync(join(root, p.path)))) {
+  const all = [...PAGES, ...EXTRA_PAGES.map((path) => ({ path }))];
+  for (const p of all.filter((p) => existsSync(join(root, p.path)))) {
     for (const h of hrefs(read(p.path))) {
       if (/^(mailto:|https?:|#)/.test(h)) continue;
       const target = h.split(/[#?]/)[0];
@@ -67,6 +71,10 @@ function linksResolve() {
   return errs;
 }
 
+// The one outside website the pages may link to (as a link, never as something loaded).
+const GITHUB_PRIVACY =
+  "https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement";
+
 function nothingThirdParty() {
   const errs = [];
   const files = walk(root)
@@ -76,10 +84,55 @@ function nothingThirdParty() {
     const rel = f.slice(root.length + 1);
     const text = stripComments(readFileSync(f, "utf8"))
       .replaceAll("http://www.w3.org/2000/svg", "");
-    if (/https?:\/\//.test(text)) errs.push(`${rel}: contains an http(s):// URL`);
+    for (const m of text.matchAll(/https?:\/\/[^\s"'<>)]*/g)) {
+      const host = m[0].replace(/^https?:\/\//, "").split(/[/?#:]/)[0];
+      const asLink = text.includes(`href="${m[0]}"`);
+      if (host === "mutisiastudio.com") continue;
+      if (m[0] === GITHUB_PRIVACY && asLink && !text.includes(`src="${m[0]}"`)) continue;
+      errs.push(`${rel}: contains the URL ${m[0]}`);
+    }
     for (const m of text.matchAll(/mailto:[^"'\s<>)]*/g))
       if (m[0] !== MAIL) errs.push(`${rel}: unexpected ${m[0]}`);
   }
+  return errs;
+}
+
+const SITE = "https://mutisiastudio.com";
+
+function previewTags() {
+  const errs = [];
+  for (const p of PAGES.filter((p) => existsSync(join(root, p.path)))) {
+    const html = stripComments(read(p.path));
+    const meta = (name) =>
+      (html.match(new RegExp(`<meta [^>]*(?:property|name)="${name}" content="([^"]+)"`)) || [])[1];
+    const canon = (html.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
+    if (!canon) errs.push(`${p.path}: missing canonical`);
+    else if (canon !== SITE + (p.path === "index.html" ? "/" : "/" + p.path.replace("index.html", "")))
+      errs.push(`${p.path}: canonical ${canon} is not this page's address`);
+    for (const n of ["og:title", "og:description", "og:url", "og:image", "og:type", "og:locale", "description"])
+      if (!meta(n)) errs.push(`${p.path}: missing ${n}`);
+    if (canon && meta("og:url") !== canon) errs.push(`${p.path}: og:url must equal canonical`);
+    if (meta("og:image") !== SITE + "/assets/img/og.png") errs.push(`${p.path}: og:image must be ${SITE}/assets/img/og.png`);
+    const alt = (l) => new RegExp(`<link rel="alternate" hreflang="${l}" href="${SITE}${p.pair}"`);
+    const own = (l) => html.includes(`hreflang="${l}" href="${canon}"`);
+    const other = p.lang === "en" ? "es" : "en";
+    if (!alt(other).test(html)) errs.push(`${p.path}: missing hreflang ${other} to ${p.pair}`);
+    if (!own(p.lang)) errs.push(`${p.path}: missing hreflang ${p.lang} to itself`);
+    const en = p.lang === "en" ? canon : SITE + p.pair;
+    if (!html.includes(`hreflang="x-default" href="${en}"`)) errs.push(`${p.path}: x-default must point to ${en}`);
+  }
+  if (!existsSync(join(root, "assets/img/og.png"))) errs.push("missing assets/img/og.png");
+  return errs;
+}
+
+// Small pages for a phone's battery: the sky must not cost more than it has to.
+function motionIsLight() {
+  if (!existsSync(join(root, MOTION))) return [`missing ${MOTION}`];
+  const src = stripComments(read(MOTION));
+  const errs = [];
+  if (!/Math\.min\(\s*2\s*,\s*window\.devicePixelRatio/.test(src)) errs.push(`${MOTION}: dpr must be capped at 2`);
+  if (!/FRAME_MS\s*=\s*33/.test(src) || !/< FRAME_MS/.test(src)) errs.push(`${MOTION}: missing the ~30 fps frame-interval guard`);
+  if (!/canvas\.width\s*=\s*canvas\.height\s*=\s*0/.test(src)) errs.push(`${MOTION}: must shrink the canvas to 0 when idle`);
   return errs;
 }
 
@@ -332,7 +385,7 @@ function privacyNamesEveryPermission() {
   for (const p of PRIVACY.filter((p) => existsSync(join(root, p)))) {
     const html = read(p);
     for (const perm of perms)
-      if (!html.includes(perm)) errs.push(`${p}: does not name ${perm}`);
+      if (!new RegExp(`\\b${perm}\\b`).test(html)) errs.push(`${p}: does not name ${perm}`);
   }
   return errs;
 }
@@ -341,6 +394,8 @@ function privacyBasics() {
   const errs = [];
   for (const p of PRIVACY) {
     const html = existsSync(join(root, p)) ? read(p) : "";
+    if (!html.includes(`href="${GITHUB_PRIVACY}"`)) errs.push(`${p}: missing the GitHub privacy link`);
+    if (!html.includes("DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION")) errs.push(`${p}: missing the library permission note`);
     for (const need of ["contact@mutisiastudio.com", "Mutisia Studio", "Leipzig"])
       if (!html.includes(need)) errs.push(`${p}: missing "${need}"`);
     if (!/<time datetime="\d{4}-\d{2}-\d{2}">/.test(html))
@@ -357,7 +412,7 @@ function noInternetClaimIsTrue() {
 
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
   themesMatchApp, contrast, defaultTheme, sectionsInOrder, sameStructure, comingSoon,
-  motionCoversMovingSkies, motionRespectsUser, motionKeepsContrast,
+  motionCoversMovingSkies, motionRespectsUser, motionKeepsContrast, motionIsLight, previewTags,
   privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue];
 
 let failed = 0;
