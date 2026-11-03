@@ -187,6 +187,12 @@ function contrast() {
   for (const m of css.matchAll(/(?<![\w-])opacity:\s*([^;]+);/g))
     if (!["var(--muted)", "1", "0.18"].includes(m[1].trim()))
       errs.push(`site.css: opacity ${m[1].trim()} is not tested; use var(--muted)`);
+  // Toggle labels must sit on the page, not on a filled track or pill.
+  for (const m of css.matchAll(/(\.toggle[^{]*)\{([^}]*)\}/g))
+    for (const d of m[2].matchAll(/background(?:-color)?:\s*([^;]+);/g))
+      if (d[1].trim() !== "transparent")
+        errs.push(`site.css: ${m[1].trim()} has background ${d[1].trim()}; contrast is not tested on it`);
+  // The card clock "18:42" is exempt: aria-hidden decoration imitating the app's own screen.
   // Softened text is ink mixed toward the background by --muted.
   const soften = (ink, bg) => ink.map((v, i) => v * muted + bg[i] * (1 - muted));
   const test2 = (label, ink, bgs, veil) => {

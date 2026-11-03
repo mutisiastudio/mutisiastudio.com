@@ -87,15 +87,17 @@ a { color: inherit; }
   margin-top: 1.25rem;
 }
 .plains-head .tag { margin: 0; }
+/* No filled track or pill: label text then sits on the page itself, which the
+   contrast check covers. The ring marks the chosen mode. */
 .toggle {
   display: inline-flex; border-radius: 999px; padding: 3px;
-  background: color-mix(in srgb, var(--ink) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 35%, transparent);
 }
 .toggle button {
   font: inherit; font-size: 0.8rem; border: 0; border-radius: 999px; padding: 4px 12px;
   cursor: pointer; background: transparent; color: var(--ink); opacity: var(--muted);
 }
-.toggle button.on { background: var(--ink); color: var(--mid); opacity: 1; }
+.toggle button.on { box-shadow: inset 0 0 0 2px var(--ink); font-weight: 600; opacity: 1; }
 #theme-name { font-size: 1rem; margin: 0.9rem 0 0; }
 
 @media (prefers-reduced-motion: no-preference) {
