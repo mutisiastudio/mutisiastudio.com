@@ -9,11 +9,19 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFileSync(join(root, p), "utf8");
 
 const EXTRA_PAGES = ["404.html"];
+// The studio's front page and its website privacy at the root; each app under its own folder,
+// with the app's own privacy policy (the one its store listing links to).
 const PAGES = [
   { path: "index.html", lang: "en", pair: "/es/", privacy: "/privacy/" },
   { path: "es/index.html", lang: "es", pair: "/", privacy: "/es/privacidad/" },
   { path: "privacy/index.html", lang: "en", pair: "/es/privacidad/", privacy: "/privacy/" },
   { path: "es/privacidad/index.html", lang: "es", pair: "/privacy/", privacy: "/es/privacidad/" },
+  { path: "pomoluna/index.html", lang: "en", pair: "/es/pomoluna/", privacy: "/pomoluna/privacy/" },
+  { path: "es/pomoluna/index.html", lang: "es", pair: "/pomoluna/", privacy: "/es/pomoluna/privacidad/" },
+  { path: "pomoluna/privacy/index.html", lang: "en", pair: "/es/pomoluna/privacidad/",
+    privacy: "/pomoluna/privacy/" },
+  { path: "es/pomoluna/privacidad/index.html", lang: "es", pair: "/pomoluna/privacy/",
+    privacy: "/es/pomoluna/privacidad/" },
 ];
 const MAIL = "mailto:contact@mutisiastudio.com";
 
@@ -241,7 +249,9 @@ function contrast() {
   return errs;
 }
 
-const HOMES = ["index.html", "es/index.html"];
+const STUDIO = ["index.html", "es/index.html"];
+const HOMES = ["pomoluna/index.html", "es/pomoluna/index.html"];
+const langOf = (path) => (path.startsWith("es/") ? "es" : "en");
 const SECTIONS = ["hero", "how-it-works", "make-it-yours", "themes", "your-goals", "studio"];
 const idsOf = (html) => [...stripComments(html).matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
 
@@ -290,7 +300,7 @@ function screenshots() {
   const errs = [];
   const names = {};
   for (const path of HOMES) {
-    const lang = path === "index.html" ? "en" : "es";
+    const lang = langOf(path);
     const html = stripComments(read(path));
     const hero = (html.match(/<section id="hero"[\s\S]*?<\/section>/) || [""])[0];
     names[lang] = [];
@@ -321,7 +331,7 @@ function screenshots() {
 // One notice per page while the app is not public; swapping it for the real badge is one edit.
 function comingSoon() {
   const errs = [];
-  for (const path of HOMES) {
+  for (const path of [...STUDIO, ...HOMES]) {
     const html = stripComments(read(path));
     const n = (html.match(/data-store-badge/g) || []).length;
     if (n !== 1) errs.push(`${path}: expected 1 [data-store-badge], found ${n}`);
@@ -331,7 +341,8 @@ function comingSoon() {
 }
 
 const MANIFEST = "/home/lucia/projects/pomodoro/app/src/main/AndroidManifest.xml";
-const PRIVACY = ["privacy/index.html", "es/privacidad/index.html"];
+const APP_PRIVACY = ["pomoluna/privacy/index.html", "es/pomoluna/privacidad/index.html"];
+const SITE_PRIVACY = ["privacy/index.html", "es/privacidad/index.html"];
 
 function manifestPermissions() {
   const xml = readFileSync(MANIFEST, "utf8");
@@ -343,7 +354,7 @@ function privacyNamesEveryPermission() {
   const errs = [];
   const perms = manifestPermissions();
   if (!perms.length) errs.push("no permissions found in the manifest");
-  for (const p of PRIVACY.filter((p) => existsSync(join(root, p)))) {
+  for (const p of APP_PRIVACY.filter((p) => existsSync(join(root, p)))) {
     const html = read(p);
     for (const perm of perms)
       if (!new RegExp(`\\b${perm}\\b`).test(html)) errs.push(`${p}: does not name ${perm}`);
@@ -353,10 +364,16 @@ function privacyNamesEveryPermission() {
 
 function privacyBasics() {
   const errs = [];
-  for (const p of PRIVACY) {
+  for (const p of [...APP_PRIVACY, ...SITE_PRIVACY]) {
     const html = existsSync(join(root, p)) ? read(p) : "";
-    if (!html.includes(`href="${GITHUB_PRIVACY}"`)) errs.push(`${p}: missing the GitHub privacy link`);
-    if (!html.includes("DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION")) errs.push(`${p}: missing the library permission note`);
+    if (SITE_PRIVACY.includes(p) && !html.includes(`href="${GITHUB_PRIVACY}"`))
+      errs.push(`${p}: missing the GitHub privacy link`);
+    if (APP_PRIVACY.includes(p)) {
+      if (!html.includes("DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"))
+        errs.push(`${p}: missing the library permission note`);
+      const site = langOf(p) === "es" ? "/es/privacidad/" : "/privacy/";
+      if (!hrefs(html).includes(site)) errs.push(`${p}: must point to the website privacy ${site}`);
+    }
     for (const need of ["contact@mutisiastudio.com", "Mutisia Studio", "Leipzig"])
       if (!html.includes(need)) errs.push(`${p}: missing "${need}"`);
     if (!/<time datetime="\d{4}-\d{2}-\d{2}">/.test(html))
@@ -373,9 +390,19 @@ function countsVisits() {
     errs.push(`${COUNTER_JS}: not GoatCounter's script with its license line`);
   for (const p of [...PAGES.map((p) => p.path), ...EXTRA_PAGES])
     if (read(p).split(COUNTER_TAG).length !== 2) errs.push(`${p}: needs ${COUNTER_TAG} once`);
-  for (const p of PRIVACY)
+  for (const p of SITE_PRIVACY)
     for (const need of [`href="${COUNTER_PRIVACY}"`, "1000"])
       if (!read(p).includes(need)) errs.push(`${p}: missing "${need}"`);
+  return errs;
+}
+
+// The studio's front page leads to each app's page in the same language.
+function studioLinksApps() {
+  const errs = [];
+  for (const path of STUDIO.filter((p) => existsSync(join(root, p)))) {
+    const app = langOf(path) === "es" ? "/es/pomoluna/" : "/pomoluna/";
+    if (!hrefs(read(path)).includes(app)) errs.push(`${path}: missing link to ${app}`);
+  }
   return errs;
 }
 
@@ -419,7 +446,8 @@ function gridIsLight() {
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
   themesMatchApp, contrast, sectionsInOrder, sameStructure, comingSoon, noOldPicker,
   screenshots, previewTags, gridCoversEverySky, gridIsLight,
-  privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue, countsVisits];
+  privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue, countsVisits,
+  studioLinksApps];
 
 let failed = 0;
 for (const check of checks) {

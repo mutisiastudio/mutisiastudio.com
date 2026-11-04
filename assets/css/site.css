@@ -179,3 +179,41 @@ footer .links a { margin-right: 1rem; }
 .doc p, .doc li { margin-top: 0.5rem; }
 .doc ul { padding-left: 1.2rem; margin: 0.4rem 0 0; }
 .doc code { font-size: 0.9em; }
+
+/* The studio's front page: the name, then one glass card per app. */
+.studio-hero { text-align: center; padding-top: 4.5rem; padding-bottom: 3.5rem; }
+.studio-word { font: 300 3rem/1.05 "Nunito", sans-serif; letter-spacing: 0.04em; color: #FFF3C4; margin: 0; }
+.studio-word span {
+  display: block; font: 400 0.8rem/1 "Outfit", sans-serif; letter-spacing: 0.35em;
+  text-transform: uppercase; color: #E9A55A; margin-top: 0.9rem;
+}
+section.studio-hero .lead { margin: 1.4rem auto 0; }
+footer .studio a { text-decoration: none; }
+
+.app-card {
+  display: grid; gap: 2rem; align-items: center; margin-top: 1.2rem;
+  padding: 2rem 1.25rem 2.4rem; border-radius: 28px; text-align: center;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+.app-card .mark.badge { padding: 18px 26px 16px; }
+.app-card .mark img { width: 84px; height: 84px; }
+.app-card .mark .word { font-size: 1.8rem; }
+.app-card h2 { font-size: 1.5rem; margin-top: 1.2rem; text-wrap: balance; }
+.app-card p { opacity: var(--muted); margin: 0.5rem auto 0; max-width: 24rem; }
+.app-card .store { margin-top: 1rem; font-size: 0.85rem; letter-spacing: 0.08em; }
+.app-card .fan { padding-top: 1rem; }
+.go {
+  display: inline-block; margin-top: 1.4rem; padding: 0.7rem 1.4rem; border-radius: 999px;
+  background: #FFF3C4; color: #0B1530; text-decoration: none; font-weight: 600;
+}
+.go:hover { background: #fff; }
+
+@media (min-width: 900px) {
+  .studio-word { font-size: 4rem; }
+  .app-card { grid-template-columns: 1.2fr 1fr; text-align: left; padding: 2.5rem 2rem 2.5rem 3rem; }
+  .app-card .mark.badge { margin: 0; }
+  .app-card p { margin-left: 0; }
+  .app-card .fan .phone { width: 7.5rem; flex: none; }
+  .app-card .fan .phone.mid { width: 9.5rem; }
+}
