@@ -71,15 +71,24 @@ function linksResolve() {
   return errs;
 }
 
-// The one outside website the pages may link to (as a link, never as something loaded).
+// The outside pages the site may link to (as links, never as something loaded).
 const GITHUB_PRIVACY =
   "https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement";
+const COUNTER_PRIVACY = "https://www.goatcounter.com/help/privacy";
+const LINKS_OUT = [GITHUB_PRIVACY, COUNTER_PRIVACY];
+
+// Visit counting: our own copy of GoatCounter's script, which sends only to this address.
+// The copy is vendored as is, so the site's own rules below skip it.
+const COUNTER = "https://mutisiastudio.goatcounter.com/count";
+const COUNTER_JS = "assets/js/count.js";
+const COUNTER_TAG = `<script data-goatcounter="${COUNTER}" async src="/${COUNTER_JS}"></script>`;
 
 function nothingThirdParty() {
   const errs = [];
   const files = walk(root)
     .filter((f) => [".html", ".css", ".js", ".mjs"].includes(extname(f)))
-    .filter((f) => !f.endsWith(join("tools", "check.mjs")));
+    .filter((f) => !f.endsWith(join("tools", "check.mjs")))
+    .filter((f) => f !== join(root, COUNTER_JS));
   for (const f of files) {
     const rel = f.slice(root.length + 1);
     const text = stripComments(readFileSync(f, "utf8"))
@@ -88,7 +97,8 @@ function nothingThirdParty() {
       const host = m[0].replace(/^https?:\/\//, "").split(/[/?#:]/)[0];
       const asLink = text.includes(`href="${m[0]}"`);
       if (host === "mutisiastudio.com") continue;
-      if (m[0] === GITHUB_PRIVACY && asLink && !text.includes(`src="${m[0]}"`)) continue;
+      if (m[0] === COUNTER && text.includes(`data-goatcounter="${COUNTER}"`)) continue;
+      if (LINKS_OUT.includes(m[0]) && asLink && !text.includes(`src="${m[0]}"`)) continue;
       errs.push(`${rel}: contains the URL ${m[0]}`);
     }
     for (const m of text.matchAll(/mailto:[^"'\s<>)]*/g))
@@ -265,7 +275,8 @@ function noOldPicker() {
   const errs = [];
   for (const f of ["assets/js/theme-picker.js", "assets/js/sky-motion.js"])
     if (existsSync(join(root, f))) errs.push(`${f} must be deleted`);
-  const assets = walk(join(root, "assets")).map((f) => f.slice(root.length + 1));
+  const assets = walk(join(root, "assets")).map((f) => f.slice(root.length + 1))
+    .filter((f) => f !== COUNTER_JS);
   const files = [...PAGES.map((p) => p.path), ...EXTRA_PAGES, ...assets]
     .filter((f) => [".html", ".css", ".js"].includes(extname(f)));
   for (const f of files)
@@ -354,6 +365,20 @@ function privacyBasics() {
   return errs;
 }
 
+// Every page counts its visit once, and both policies say so.
+function countsVisits() {
+  const errs = [];
+  if (!existsSync(join(root, COUNTER_JS))) return [`${COUNTER_JS} is missing`];
+  if (!/GoatCounter[\s\S]*ISC license/.test(read(COUNTER_JS)))
+    errs.push(`${COUNTER_JS}: not GoatCounter's script with its license line`);
+  for (const p of [...PAGES.map((p) => p.path), ...EXTRA_PAGES])
+    if (read(p).split(COUNTER_TAG).length !== 2) errs.push(`${p}: needs ${COUNTER_TAG} once`);
+  for (const p of PRIVACY)
+    for (const need of [`href="${COUNTER_PRIVACY}"`, "1000"])
+      if (!read(p).includes(need)) errs.push(`${p}: missing "${need}"`);
+  return errs;
+}
+
 // The policy says the app has no internet access; fail if the manifest ever disagrees.
 function noInternetClaimIsTrue() {
   return manifestPermissions().includes("INTERNET")
@@ -394,7 +419,7 @@ function gridIsLight() {
 const checks = [pagesExist, langAndPairs, linksResolve, nothingThirdParty, footerLinks,
   themesMatchApp, contrast, sectionsInOrder, sameStructure, comingSoon, noOldPicker,
   screenshots, previewTags, gridCoversEverySky, gridIsLight,
-  privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue];
+  privacyNamesEveryPermission, privacyBasics, noInternetClaimIsTrue, countsVisits];
 
 let failed = 0;
 for (const check of checks) {
