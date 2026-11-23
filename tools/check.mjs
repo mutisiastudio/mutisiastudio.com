@@ -246,6 +246,20 @@ function contrast() {
     const rm = ratio(soft, b);
     if (rm < 4.5) errs.push(`muted ink on ${stop} is ${rm.toFixed(2)} (< 4.5)`);
   }
+  // The studio pages: dark green ink (also softened) and the darker orange of STUDIO on cream.
+  const cream = rgb("#FBF6EC");
+  const studioInk = rgb("#1F3D30");
+  const soft = studioInk.map((v, i) => v * muted + cream[i] * (1 - muted));
+  for (const [name, c] of [["studio ink", studioInk], ["muted studio ink", soft]]) {
+    const r = ratio(c, cream);
+    if (r < 4.5) errs.push(`${name} on cream is ${r.toFixed(2)} (< 4.5)`);
+  }
+  // The green band: cream ink and the peach of STUDIO on both stops.
+  for (const stop of ["#3A6F5A", "#3C725D"])
+    for (const [name, hex] of [["band ink", "#F6F1E4"], ["band STUDIO", "#FFE3C8"]]) {
+      const r = ratio(rgb(hex), rgb(stop));
+      if (r < 4.5) errs.push(`${name} on ${stop} is ${r.toFixed(2)} (< 4.5)`);
+    }
   return errs;
 }
 
