@@ -194,12 +194,16 @@ footer .links a { margin-right: 1rem; }
 
 /* The studio's front page: the name, then one glass card per app. */
 .studio-hero { text-align: center; padding-top: 4.5rem; padding-bottom: 3.5rem; }
-.studio-word { font: 300 3rem/1.05 "Nunito", sans-serif; letter-spacing: 0.04em; color: #FFF3C4; margin: 0; }
-.studio-word span {
-  display: block; font: 400 0.8rem/1 "Outfit", sans-serif; letter-spacing: 0.35em;
-  text-transform: uppercase; color: #E9A55A; margin-top: 0.9rem;
+/* The studio's logo: the mutisia's tendril and flower beside the name in capitals. */
+.studio-logo { display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin: 0; }
+.studio-logo img { width: 5rem; height: 5rem; }
+.studio-name {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem;
+  font: 300 2.2rem/1 "Nunito", sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: #FFF3C4;
 }
-section.studio-hero .lead { margin: 1.4rem auto 0; }
+.studio-name span {
+  font: 400 0.8rem/1 "Outfit", sans-serif; letter-spacing: 0.62em; color: #F07A2B;
+}
 footer .studio a { text-decoration: none; }
 
 .app-card {
@@ -222,7 +226,9 @@ footer .studio a { text-decoration: none; }
 .go:hover { background: #fff; }
 
 @media (min-width: 900px) {
-  .studio-word { font-size: 4rem; }
+  .studio-logo img { width: 7rem; height: 7rem; }
+  .studio-name { font-size: 3.2rem; gap: 0.9rem; }
+  .studio-name span { font-size: 1rem; }
   .app-card { grid-template-columns: 1.2fr 1fr; text-align: left; padding: 2.5rem 2rem 2.5rem 3rem; }
   .app-card .mark.badge { margin: 0; }
   .app-card p { margin-left: 0; }
