@@ -27,9 +27,9 @@ body {
   background: linear-gradient(#0B1530, #12274A 560px, #24507F max(40%, 760px), #3A6A9C);
   background-color: #3A6A9C;
 }
-/* The studio's own pages sit on cream paper; each app keeps its colors inside its card.
+/* The studio's own pages sit on light sage; each app keeps its colors inside its card.
    tools/check.mjs tests the text on this cream too. */
-body.studio { --ink: #1F3D30; background: #FBF6EC; }
+body.studio { --ink: #1F3D30; background: #E3EDE4; }
 
 section, footer, .top {
   max-width: 52rem;
