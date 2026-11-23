@@ -35,7 +35,7 @@
     <section class="doc">
       <h1>Privacy policy</h1>
       <p class="soft">Pomoluna, an Android focus timer by Mutisia Studio.
-        Last updated: <time datetime="2026-11-04">November 4, 2026</time>.
+        Last updated: <time datetime="2026-11-23">November 23, 2026</time>.
         <a href="/es/pomoluna/privacidad/">Leer en español</a>.</p>
 
       <h2>The short version</h2>
@@ -80,9 +80,10 @@
         <li><code>FOREGROUND_SERVICE</code> and
           <code>FOREGROUND_SERVICE_SPECIAL_USE</code>: let the timer keep running when
           the app is closed. Android shows its notification while it does.</li>
-        <li><code>SCHEDULE_EXACT_ALARM</code> (Android 12 and older) and
-          <code>USE_EXACT_ALARM</code> (Android 13 and newer): make the end-of-stage
-          alert arrive on time.</li>
+        <li><code>SCHEDULE_EXACT_ALARM</code>: make the end-of-stage alert arrive on
+          time. If Android does not allow it, the app uses a less exact alarm.</li>
+        <li><code>RECEIVE_BOOT_COMPLETED</code>: set the end-of-stage alert again after
+          the phone restarts or the app is updated.</li>
         <li><code>VIBRATE</code>: vibrate when a stage ends.</li>
         <li><code>WAKE_LOCK</code>: keep the processor awake while the timer runs, so
           the clock does not stop.</li>

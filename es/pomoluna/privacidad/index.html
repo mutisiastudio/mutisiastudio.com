@@ -35,7 +35,7 @@
     <section class="doc">
       <h1>Política de privacidad</h1>
       <p class="soft">Pomoluna, un temporizador de enfoque para Android de Mutisia Studio.
-        Última actualización: <time datetime="2026-11-04">4 de noviembre de 2026</time>.
+        Última actualización: <time datetime="2026-11-23">23 de noviembre de 2026</time>.
         <a href="/pomoluna/privacy/">Read in English</a>.</p>
 
       <h2>En pocas palabras</h2>
@@ -81,9 +81,10 @@
         <li><code>FOREGROUND_SERVICE</code> y
           <code>FOREGROUND_SERVICE_SPECIAL_USE</code>: que el reloj siga corriendo con
           la app cerrada. Mientras tanto, Android muestra su notificación.</li>
-        <li><code>SCHEDULE_EXACT_ALARM</code> (Android 12 y anteriores) y
-          <code>USE_EXACT_ALARM</code> (Android 13 y posteriores): que el aviso de fin
-          de etapa llegue a tiempo.</li>
+        <li><code>SCHEDULE_EXACT_ALARM</code>: que el aviso de fin de etapa llegue a
+          tiempo. Si Android no lo permite, la app usa una alarma menos exacta.</li>
+        <li><code>RECEIVE_BOOT_COMPLETED</code>: volver a programar el aviso de fin de
+          etapa después de reiniciar el teléfono o actualizar la app.</li>
         <li><code>VIBRATE</code>: vibrar cuando termina una etapa.</li>
         <li><code>WAKE_LOCK</code>: mantener el procesador despierto mientras corre el
           reloj, para que no se frene.</li>
