@@ -36,13 +36,24 @@ section, footer, .top {
 
 a { color: inherit; }
 
+/* The top bar: the app's mark on one side, the sections as soft pills on the other. */
 .top {
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem;
-  padding-top: 0.9rem; padding-bottom: 0; font-size: 0.8rem;
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 0.8rem 1rem; padding-top: 1rem; padding-bottom: 0; max-width: 64rem;
 }
 .top a { text-decoration: none; }
-.top a:hover { text-decoration: underline; }
-.top .brand { font-weight: 600; letter-spacing: 0.04em; }
+.top .brand {
+  display: flex; align-items: center; gap: 0.6rem;
+  font: 300 1.5rem/1 "Nunito", sans-serif; letter-spacing: 0.04em; color: #FFF3C4;
+}
+.top .brand img { width: 2.4rem; height: 2.4rem; border-radius: 50%; }
+.top .menu { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.top .menu a {
+  padding: 0.45rem 1rem; border-radius: 999px; font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 28%, transparent);
+}
+.top .menu a:hover { background: rgba(255, 255, 255, 0.18); }
 
 /* Without JavaScript the sky grids stay empty, so hide them. */
 html:not(.js) .needs-js { display: none !important; }
