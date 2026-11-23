@@ -374,8 +374,13 @@ function privacyBasics() {
       const site = langOf(p) === "es" ? "/es/privacidad/" : "/privacy/";
       if (!hrefs(html).includes(site)) errs.push(`${p}: must point to the website privacy ${site}`);
     }
-    for (const need of ["contact@mutisiastudio.com", "Mutisia Studio", "Leipzig"])
+    for (const need of ["contact@mutisiastudio.com", "Mutisia Studio"])
       if (!html.includes(need)) errs.push(`${p}: missing "${need}"`);
+    // The website counts visits, so its policy names the person responsible.
+    if (SITE_PRIVACY.includes(p) && !html.includes("Lucia Prado"))
+      errs.push(`${p}: missing the name of the person responsible`);
+    // Lucia's city stays off the site.
+    if (html.includes("Leipzig")) errs.push(`${p}: names the city`);
     if (!/<time datetime="\d{4}-\d{2}-\d{2}">/.test(html))
       errs.push(`${p}: missing <time datetime="YYYY-MM-DD">`);
   }
