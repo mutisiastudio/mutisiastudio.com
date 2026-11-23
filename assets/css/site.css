@@ -47,7 +47,8 @@ a { color: inherit; }
   font: 300 1.5rem/1 "Nunito", sans-serif; letter-spacing: 0.04em; color: #FFF3C4;
 }
 .top .brand img { width: 2.4rem; height: 2.4rem; border-radius: 50%; }
-.top .menu { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+/* margin-left keeps the menu on the right on the studio home, which has no brand. */
+.top .menu { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-left: auto; }
 .top .menu a {
   padding: 0.45rem 1rem; border-radius: 999px; font-size: 0.95rem;
   background: rgba(255, 255, 255, 0.08);
