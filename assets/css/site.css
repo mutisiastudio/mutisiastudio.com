@@ -29,7 +29,7 @@ body {
 }
 /* The studio's own pages sit on light sage; each app keeps its colors inside its card.
    tools/check.mjs tests the text on this cream too. */
-body.studio { --ink: #1F3D30; background: #E3EDE4; }
+body.studio { --ink: #1F3D30; background: #D6E5D8; }
 
 section, footer, .top {
   max-width: 52rem;
@@ -196,55 +196,103 @@ footer .links a { margin-right: 1rem; }
 .doc ul { padding-left: 1.2rem; margin: 0.4rem 0 0; }
 .doc code { font-size: 0.9em; }
 
-/* The studio's front page: the name, then one glass card per app. */
+/* The studio's front page: the logo on a green band, then one band per app. */
 /* The green band at the top of the studio pages, with petals falling behind (petals.js).
    tools/check.mjs tests the text on its two stops. */
 .band {
-  --ink: #F6F1E4; color: var(--ink); position: relative; overflow: hidden;
-  background: linear-gradient(#3A6F5A, #3C725D);
+  --ink: #FFFCF4; color: var(--ink); position: relative; overflow: hidden;
+  /* A faint sunset glow rising from behind the hills. */
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(255, 170, 100, 0.22), rgba(255, 170, 100, 0) 100%),
+    linear-gradient(#3A6F5A, #3C725D);
 }
 .band > :not(.petals) { position: relative; }
+/* Two layers of petals: small sharp ones far away, a few big blurred ones close by. */
 .petals { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.studio-hero { text-align: center; padding-top: 4.5rem; padding-bottom: 4.5rem; }
+.petals.near { filter: blur(3px); }
+/* Round hills at the foot of the band; the band itself ends in a straight line. */
+.band > .hills { position: absolute; left: 0; bottom: 0; width: 100%; height: 4.5rem; pointer-events: none; }
+.band.slim > .hills { height: 2.2rem; }
+.hills .far { fill: #33634F; }
+.studio-hero { text-align: center; padding-top: 1.8rem; padding-bottom: 4.4rem; }
 /* The studio's logo: the mutisia's tendril and flower beside the name in capitals. */
-.studio-logo { display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin: 0; }
-.studio-logo img { width: 5rem; height: 5rem; }
+/* A soft shadow lifts the logo off the band and its glow. */
+.studio-logo { filter: drop-shadow(0 1px 6px rgba(20, 45, 35, 0.35)); display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin: 0; }
+.studio-logo img, .studio-mark { width: 4rem; height: 4rem; overflow: visible; }
+a.studio-logo { text-decoration: none; }
+/* On the home page the logo grows once: the tendril draws, the leaf shows, the flower opens, then the name. */
+@media (prefers-reduced-motion: no-preference) {
+  .grow .vine { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.3s ease-out forwards; }
+  .grow .stem { animation-delay: 0.5s; animation-duration: 0.6s; }
+  .grow .curl { animation-delay: 0.7s; animation-duration: 0.6s; }
+  .grow .leaf { animation: appear 0.5s 0.6s both; }
+  .grow .flower {
+    transform-box: fill-box; transform-origin: center; transform: scale(0);
+    animation: bloom 0.6s 1.05s cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+  }
+  .grow .studio-name { animation: appear 0.8s 0.9s both; }
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes appear { from { opacity: 0; } }
+@keyframes bloom { to { transform: scale(1); } }
+/* The thinner band on the studio's other pages; the logo there leads home. */
+.band.slim { padding: 1rem 1rem 2.4rem; }
+.band.slim .studio-logo img { width: 2.8rem; height: 2.8rem; }
+.band.slim .studio-name { font-size: 1.5rem; gap: 0.5rem; }
+.band.slim .studio-name span { font-size: 0.6rem; }
 .studio-name {
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem;
   font: 300 2.2rem/1 "Nunito", sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink);
 }
 .studio-name span {
-  font: 400 0.8rem/1 "Outfit", sans-serif; letter-spacing: 0.62em; color: #FFE3C8;
+  font: 400 0.8rem/1 "Outfit", sans-serif; letter-spacing: 0.62em; color: #FFEAD6;
 }
 footer .studio a { text-decoration: none; }
+/* On the studio's pages the footer is centered under the centered logo, without a line. */
+body.studio footer { text-align: center; border-top: none; }
+body.studio footer .links a { margin: 0 0.5rem; }
+/* The phones lead to the app's page too; they lift a little on hover. */
+a.fan { text-decoration: none; }
+a.fan .phone { transition: translate 0.2s; }
+a.fan:hover .phone { translate: 0 -0.4rem; }
+
 
 .app-card {
-  display: grid; gap: 2rem; align-items: center; margin-top: 1.2rem;
-  padding: 2rem 1.25rem 2.4rem; border-radius: 28px; text-align: center;
-  /* Pomoluna's night sky, so the card keeps the app's own colors on the cream page. */
-  --ink: #EEF9FB; color: var(--ink);
-  background: linear-gradient(#1E3D6B, #2C5687 60%, #3A6A9C);
-  box-shadow: 0 16px 40px rgba(31, 61, 48, 0.25);
+  /* Each app sits on the studio's sage, in the studio's ink; its colors live in its icon and screenshots. */
+  text-align: center;
 }
-.app-card .mark.badge { padding: 18px 26px 16px; }
-.app-card .mark img { width: 84px; height: 84px; }
-.app-card .mark .word { font-size: 1.8rem; }
+.app-inner {
+  display: grid; gap: 2rem; align-items: center; max-width: 52rem; margin: 0 auto;
+  padding: 2.4rem 1rem 2.8rem;
+}
+/* The app's logo is the link to its page: the arrow and the glow on hover say it's clickable. */
+.app-link {
+  display: inline-flex; align-items: center; gap: 0.9rem; text-decoration: none; color: var(--ink);
+}
+.app-link img {
+  width: 76px; height: 76px; border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(31, 61, 48, 0.25); transition: box-shadow 0.2s;
+}
+.app-link .word { font: 300 2.3rem/1 "Nunito", sans-serif; letter-spacing: 0.04em; }
+.app-link .arrow {
+  display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  font-size: 1.2rem; box-shadow: inset 0 0 0 1.5px currentColor; transition: transform 0.2s, background 0.2s;
+}
+.app-link:hover img, .app-link:focus-visible img { box-shadow: 0 10px 32px rgba(31, 61, 48, 0.45); }
+.app-link:hover .arrow, .app-link:focus-visible .arrow {
+  transform: translateX(0.3rem); background: var(--ink); color: #D6E5D8;
+}
 .app-card h2 { font-size: 1.5rem; margin-top: 1.2rem; text-wrap: balance; }
 .app-card p { opacity: var(--muted); margin: 0.5rem auto 0; max-width: 24rem; }
 .app-card .store { margin-top: 1rem; font-size: 0.85rem; letter-spacing: 0.08em; }
-.app-card .fan { padding-top: 1rem; }
-.go {
-  display: inline-block; margin-top: 1.4rem; padding: 0.7rem 1.4rem; border-radius: 999px;
-  background: #FFF3C4; color: #0B1530; text-decoration: none; font-weight: 600;
-}
-.go:hover { background: #fff; }
 
 @media (min-width: 900px) {
-  .studio-logo img { width: 7rem; height: 7rem; }
-  .studio-name { font-size: 3.2rem; gap: 0.9rem; }
-  .studio-name span { font-size: 1rem; }
-  .app-card { grid-template-columns: 1.2fr 1fr; text-align: left; padding: 2.5rem 2rem 2.5rem 3rem; }
-  .app-card .mark.badge { margin: 0; }
+  .studio-logo img, .studio-mark { width: 5rem; height: 5rem; }
+  .studio-name { font-size: 2.4rem; gap: 0.75rem; }
+  .studio-name span { font-size: 0.85rem; }
+  .app-card { text-align: left; }
+  /* Same width and side padding as the footer, so the text lines up with it. */
+  .app-inner { grid-template-columns: 1.2fr 1fr; padding: 2.5rem 1rem; }
   .app-card p { margin-left: 0; }
   .app-card .fan .phone { width: 7.5rem; flex: none; }
   .app-card .fan .phone.mid { width: 9.5rem; }

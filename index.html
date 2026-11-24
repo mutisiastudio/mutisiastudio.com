@@ -21,39 +21,39 @@
 </head>
 <body class="studio">
   <header class="band" data-petals>
-    <nav class="top" aria-label="Site">
-      <span class="menu">
-        <a href="#apps">Apps</a>
-        <a href="mailto:contact@mutisiastudio.com">Contact</a>
-      </span>
-    </nav>
     <section class="studio-hero">
-      <h1 class="studio-logo">
-        <img src="/assets/img/mutisia-mark.svg" alt="" width="64" height="64">
+      <h1 class="studio-logo grow">
+        <svg class="studio-mark" viewBox="0 0 64 64" fill="none" stroke-linecap="round" aria-hidden="true">
+          <path class="vine" pathLength="1" d="M12 58 C10 34 26 16 44 18 C56 19 57 36 46 38 C38 39 36 30 42 29 C46 28 47 33 44 34" stroke="#E8F5EC" stroke-width="3.2"/>
+          <path class="leaf" d="M12.5 46 Q14 38 21 35 Q20 43 12.5 46 Z" fill="#E8F5EC"/>
+          <path class="vine curl" pathLength="1" d="M21 35 C24 32 28 33 27.5 36.5 C27 39 24 38.5 24.5 36.5" stroke="#E8F5EC" stroke-width="1.6"/>
+          <path class="vine stem" pathLength="1" d="M36 18 C39 12 44 9 49 9" stroke="#E8F5EC" stroke-width="2.4"/>
+          <circle class="flower" cx="53" cy="9" r="6.5" fill="#F07A2B"/>
+        </svg>
         <span class="studio-name">Mutisia<span>Studio</span></span>
       </h1>
     </section>
+    <svg class="hills" viewBox="0 0 3000 60" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path class="far" d="M0 60 L0 7 C8 6 12 0 47 4 C82 8 170 26 207 28 C244 30 254 17 269 15 C284 13 283 14 298 16 C313 18 340 24 361 24 C382 24 407 15 423 14 C439 13 430 13 457 16 C484 19 547 35 586 33 C625 31 666 7 691 3 C716 -1 712 3 735 7 C758 11 790 27 827 27 C864 27 921 7 955 6 C989 5 1007 23 1033 23 C1059 23 1088 6 1112 7 C1136 8 1145 27 1175 28 C1205 29 1258 12 1293 12 C1328 12 1355 28 1388 27 C1421 26 1448 5 1489 6 C1530 7 1603 27 1633 31 C1663 35 1647 35 1669 32 C1691 29 1746 17 1767 13 C1788 9 1773 8 1796 10 C1819 12 1866 23 1904 23 C1942 23 1991 7 2021 8 C2051 9 2048 31 2085 31 C2122 31 2196 8 2244 7 C2292 6 2343 27 2375 28 C2407 29 2408 14 2438 14 C2468 14 2526 27 2553 30 C2580 33 2572 36 2603 33 C2634 30 2698 11 2740 10 C2782 9 2810 26 2852 25 C2894 24 2967 10 2992 7 C3017 4 2999 7 3000 7 L3000 60 Z"/>
+    </svg>
   </header>
 
-  <main>
-    <section id="apps">
-      <p class="tag">Our apps</p>
-
-      <article class="app-card">
+  <main id="apps">
+    <article class="app-card">
+      <div class="app-inner">
         <div>
-          <div class="mark badge"><img src="/assets/img/icon.svg" alt=""><span class="word">pomoluna</span></div>
+          <a class="app-link" href="/pomoluna/" aria-label="Meet Pomoluna"><img src="/assets/img/icon.svg" alt=""><span class="word">pomoluna</span><span class="arrow" aria-hidden="true">→</span></a>
           <h2>Reach your goals,<br>one pomodoro at a time.</h2>
           <p>A calm focus timer for Android, with a sky for every moment.</p>
           <p class="store" data-store-badge>Coming soon to Google Play</p>
-          <a class="go" href="/pomoluna/">Meet Pomoluna →</a>
         </div>
-        <div class="fan">
+        <a class="fan" href="/pomoluna/" tabindex="-1">
           <div class="phone"><img src="/assets/img/shots/en/fan-task.webp" alt="Pomoluna: choosing the task, with the Lava sky" width="600" height="1400"></div>
           <div class="phone mid"><img src="/assets/img/shots/en/fan-clock.webp" alt="Pomoluna: the clock, with the Constellation sky" width="600" height="1400"></div>
           <div class="phone"><img src="/assets/img/shots/en/fan-today.webp" alt="Pomoluna: the summary of the day, with the Aurora sky" width="600" height="1400"></div>
-        </div>
-      </article>
-    </section>
+        </a>
+      </div>
+    </article>
   </main>
 
   <footer>

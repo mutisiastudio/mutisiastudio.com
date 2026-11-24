@@ -227,9 +227,10 @@ function contrast() {
   if (!mm) return ["site.css must define --muted (text softening strength)"];
   const muted = Number(mm[1]);
   const errs = [];
-  // Any other dimming would escape the test below.
+  // Any other dimming would escape the test below. 0 is allowed: it hides something
+  // completely, only as the start of an entrance animation.
   for (const m of css.matchAll(/(?<![\w-])opacity:\s*([^;]+);/g))
-    if (!["var(--muted)", "1"].includes(m[1].trim()))
+    if (!["var(--muted)", "1", "0"].includes(m[1].trim()))
       errs.push(`site.css: opacity ${m[1].trim()} is not tested; use var(--muted)`);
   const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const lum = (c) => {
@@ -247,7 +248,7 @@ function contrast() {
     if (rm < 4.5) errs.push(`muted ink on ${stop} is ${rm.toFixed(2)} (< 4.5)`);
   }
   // The studio pages: dark green ink, also softened, on light sage.
-  const sage = rgb("#E3EDE4");
+  const sage = rgb("#D6E5D8");
   const studioInk = rgb("#1F3D30");
   const soft = studioInk.map((v, i) => v * muted + sage[i] * (1 - muted));
   for (const [name, c] of [["studio ink", studioInk], ["muted studio ink", soft]]) {
@@ -256,7 +257,7 @@ function contrast() {
   }
   // The green band: cream ink and the peach of STUDIO on both stops.
   for (const stop of ["#3A6F5A", "#3C725D"])
-    for (const [name, hex] of [["band ink", "#F6F1E4"], ["band STUDIO", "#FFE3C8"]]) {
+    for (const [name, hex] of [["band ink", "#FFFCF4"], ["band STUDIO", "#FFEAD6"]]) {
       const r = ratio(rgb(hex), rgb(stop));
       if (r < 4.5) errs.push(`${name} on ${stop} is ${r.toFixed(2)} (< 4.5)`);
     }
