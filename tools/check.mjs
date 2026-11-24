@@ -130,7 +130,9 @@ function previewTags() {
     for (const n of ["og:title", "og:description", "og:url", "og:image", "og:type", "og:locale", "description"])
       if (!meta(n)) errs.push(`${p.path}: missing ${n}`);
     if (canon && meta("og:url") !== canon) errs.push(`${p.path}: og:url must equal canonical`);
-    if (meta("og:image") !== SITE + "/assets/img/og.png") errs.push(`${p.path}: og:image must be ${SITE}/assets/img/og.png`);
+    // The studio's pages share the studio's image; each app's pages share the app's.
+    const img = SITE + (/^(es\/)?pomoluna\//.test(p.path) ? "/assets/img/og.png" : "/assets/img/og-studio.png");
+    if (meta("og:image") !== img) errs.push(`${p.path}: og:image must be ${img}`);
     const alt = (l) => new RegExp(`<link rel="alternate" hreflang="${l}" href="${SITE}${p.pair}"`);
     const own = (l) => html.includes(`hreflang="${l}" href="${canon}"`);
     const other = p.lang === "en" ? "es" : "en";
@@ -139,7 +141,8 @@ function previewTags() {
     const en = p.lang === "en" ? canon : SITE + p.pair;
     if (!html.includes(`hreflang="x-default" href="${en}"`)) errs.push(`${p.path}: x-default must point to ${en}`);
   }
-  if (!existsSync(join(root, "assets/img/og.png"))) errs.push("missing assets/img/og.png");
+  for (const img of ["og.png", "og-studio.png"])
+    if (!existsSync(join(root, "assets/img", img))) errs.push(`missing assets/img/${img}`);
   return errs;
 }
 
@@ -255,6 +258,21 @@ function contrast() {
     const r = ratio(c, sage);
     if (r < 4.5) errs.push(`${name} on sage is ${r.toFixed(2)} (< 4.5)`);
   }
+  // Pomoluna's pages: navy ink, also softened, on the light moonlit blue.
+  const moon = rgb("#E3ECF4");
+  const pomoInk = rgb("#17264D");
+  const pomoSoft = pomoInk.map((v, i) => v * muted + moon[i] * (1 - muted));
+  for (const [name, c] of [["Pomoluna ink", pomoInk], ["muted Pomoluna ink", pomoSoft]]) {
+    const r = ratio(c, moon);
+    if (r < 4.5) errs.push(`${name} on #E3ECF4 is ${r.toFixed(2)} (< 4.5)`);
+  }
+  // Pomoluna's dawn band: the cream name and the peach "by" on every color that can sit behind
+  // them, down to the mix of #9A72A0 and #6A5592 just under "by".
+  for (const stop of ["#1C2A63", "#3E4886", "#6A5592", "#765C95"])
+    for (const [name, hex] of [["dawn ink", "#FFF3C4"], ["dawn by", "#FFE6C4"]]) {
+      const r = ratio(rgb(hex), rgb(stop));
+      if (r < 4.5) errs.push(`${name} on ${stop} is ${r.toFixed(2)} (< 4.5)`);
+    }
   // The green band: cream ink and the peach of STUDIO on both stops.
   for (const stop of ["#3A6F5A", "#3C725D"])
     for (const [name, hex] of [["band ink", "#FFFCF4"], ["band STUDIO", "#FFEAD6"]]) {
@@ -317,7 +335,9 @@ function screenshots() {
   for (const path of HOMES) {
     const lang = langOf(path);
     const html = stripComments(read(path));
-    const hero = (html.match(/<section id="hero"[\s\S]*?<\/section>/) || [""])[0];
+    // The band on top and the hero are seen right away, so they load at once.
+    const hero = (html.match(/<header[\s\S]*?<\/header>/) || [""])[0] +
+      (html.match(/<section id="hero"[\s\S]*?<\/section>/) || [""])[0];
     names[lang] = [];
     for (const m of html.matchAll(/<img\b[^>]*>/g)) {
       const tag = m[0];
@@ -333,7 +353,7 @@ function screenshots() {
           if (!attr(n)) errs.push(`${path}: ${src} needs ${n}`);
       }
       if (!hero.includes(tag) && attr("loading") !== "lazy")
-        errs.push(`${path}: <img src="${src}"> outside #hero needs loading="lazy"`);
+        errs.push(`${path}: <img src="${src}"> below the hero needs loading="lazy"`);
     }
   }
   const a = [...new Set(names.en)].sort().join(","), b = [...new Set(names.es)].sort().join(",");

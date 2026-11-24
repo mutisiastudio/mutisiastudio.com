@@ -30,6 +30,8 @@ body {
 /* The studio's own pages sit on light sage; each app keeps its colors inside its card.
    tools/check.mjs tests the text on this cream too. */
 body.studio { --ink: #1F3D30; background: #D6E5D8; }
+/* Pomoluna's pages: the dawn sky lives in the band on top; the page itself is a warm, light linen. */
+body.pomo { --ink: #17264D; background: #E3ECF4; }
 
 section, footer, .top {
   max-width: 52rem;
@@ -249,8 +251,8 @@ a.studio-logo { text-decoration: none; }
 }
 footer .studio a { text-decoration: none; }
 /* On the studio's pages the footer is centered under the centered logo, without a line. */
-body.studio footer { text-align: center; border-top: none; }
-body.studio footer .links a { margin: 0 0.5rem; }
+body.studio footer, body.pomo footer { text-align: center; border-top: none; }
+body.studio footer .links a, body.pomo footer .links a { margin: 0 0.5rem; }
 /* The phones lead to the app's page too; they lift a little on hover. */
 a.fan { text-decoration: none; }
 a.fan .phone { transition: translate 0.2s; }
@@ -296,4 +298,40 @@ a.fan:hover .phone { translate: 0 -0.4rem; }
   .app-card p { margin-left: 0; }
   .app-card .fan .phone { width: 7.5rem; flex: none; }
   .app-card .fan .phone.mid { width: 9.5rem; }
+}
+
+/* Pomoluna's band: a dawn sky with the last stars and rising sparks (stars.js), the sun glowing
+   behind plum hills. The stops are measured from the bottom, so the name always sits on the
+   darker colors that tools/check.mjs tests; the warm colors stay below it. */
+.band.dawn {
+  --ink: #FFF3C4; display: flex; flex-direction: column; align-items: center;
+  padding: 2rem 1rem 7rem; text-align: center;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(255, 220, 160, 0.45), rgba(255, 200, 150, 0) 100%),
+    linear-gradient(to top, #F2B48E 0, #D9949A 3rem, #9A72A0 5.5rem, #6A5592 7.5rem, #3E4886 60%, #1C2A63 100%);
+}
+.dawn .hills .far { fill: #3A3366; }
+/* Sunlight hugging the ridge: a blurred copy of the hills, a little higher. */
+.hills .glow { fill: rgba(255, 214, 160, 0.7); }
+.band > .hills { overflow: visible; }
+.app-logo { display: inline-flex; align-items: center; gap: 1rem; color: var(--ink); text-decoration: none; }
+.app-logo img { width: 4.5rem; height: 4.5rem; border-radius: 50%; box-shadow: 0 0 40px rgba(92, 224, 176, 0.3); }
+.app-logo .word { font: 300 2.6rem/1 "Nunito", sans-serif; letter-spacing: 0.04em; }
+.band.dawn .by {
+  margin-top: 0.7rem; font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: #FFE6C4; text-decoration: none;
+}
+.band.dawn.slim {
+  padding: 1rem 1rem 3.6rem;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(255, 220, 160, 0.45), rgba(255, 200, 150, 0) 100%),
+    linear-gradient(to top, #F2B48E 0, #D9949A 1.4rem, #9A72A0 2.6rem, #6A5592 3.8rem, #3E4886 60%, #1C2A63 100%);
+}
+.slim .app-logo img { width: 2.6rem; height: 2.6rem; }
+.slim .app-logo .word { font-size: 1.6rem; }
+.band.dawn.slim .by { margin-top: 0.4rem; font-size: 0.6rem; }
+body.pomo .hero h1 { margin-top: 0; }
+@media (min-width: 900px) {
+  .app-logo img { width: 5.5rem; height: 5.5rem; }
+  .app-logo .word { font-size: 3.2rem; }
 }
